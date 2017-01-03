@@ -5,6 +5,8 @@ date: "08 March 2017"
 output:
   ioslides_presentation:
     css: https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css
-  beamer_presentation: default
+  beamer_presentation:
+    theme: "default"
+    colortheme: "beaver"
   slidy_presentation: default
 ---
