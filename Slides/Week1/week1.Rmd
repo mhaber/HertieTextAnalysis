@@ -1,0 +1,10 @@
+---
+title: 'MPP-E1180 Lecture 1: Introduction to the Course'
+author: "Matthias haber"
+date: "08 March 2017"
+output:
+  ioslides_presentation:
+    css: https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css
+  beamer_presentation: default
+  slidy_presentation: default
+---
