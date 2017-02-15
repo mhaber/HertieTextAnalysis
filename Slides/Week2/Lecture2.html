@@ -99,30 +99,21 @@
 
 <slide class=''><hgroup><h2>Today&#39;s Outline</h2></hgroup><article  id="todays-outline">
 
-<p><strong>R and RStudio</strong></p>
-
-<ul>
-<li>What it is (and what it&#39;s not)</li>
-<li>Quantitative vs. qualitative text analysis</li>
-<li>Two examples</li>
-</ul>
-
 <p><strong>Intro to R (Part I)</strong></p>
 
 <ul>
+<li>R and RStudio</li>
 <li>Basic syntax</li>
 <li>Assigning objects</li>
 <li>Scalars, vectors, matrices</li>
 <li>Control flow: Loops and conditions</li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>R</h2></hgroup><article  id="r">
+</article></slide><slide class=''><hgroup><h2>What is R?</h2></hgroup><article  id="what-is-r">
 
-<p><strong>What is R?</strong></p>
+<p>R is an open source programming language with a particular focus on statistical programming</p>
 
 <ul>
-<li>Open source programming language</li>
-<li>Particular focus on statistical programming</li>
 <li>Originally developed as &#39;S&#39; by Bell Labs in 1993</li>
 </ul>
 
@@ -137,34 +128,33 @@
 <ul>
 <li>Command line, unlike SPSS/Stata</li>
 <li>An interpreted programming language</li>
-<li>Purist’s interface: Text-editor &amp; CTRL-C / CTRL-V</li>
+<li>Purist’s interface: Text-editor &amp; copy paste</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>R with RStudio</h2></hgroup><article  id="r-with-rstudio">
 
-<p><strong>RStudio: An IDE for R</strong></p>
+<p>RStudio is an Integrated Developer Environment (IDE) and serves as:</p>
 
 <ul>
-<li>RStudio is an Integrated Developer Environment (IDE) that makes using R easier</li>
-<li><p>Code Editor</p>
+<li><p>Code editor</p>
 
 <ul>
 <li>Code highlighting/completion, indentation, …</li>
 <li>Feed code from editor to R-console</li>
 </ul></li>
-<li>Projects‘ to manage your work</li>
+<li>Project manager</li>
 <li>Workspace viewer</li>
-<li>Data Browser</li>
+<li>Data browser</li>
 <li>Enhanced output viewer</li>
 <li><p>Help browser</p></li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Using RStudio</h2></hgroup><article  id="using-rstudio">
 
-<p><strong>RStudio at startup</strong></p>
+<p><strong>RStudio windows at startup</strong></p>
 
 <ul>
-<li>Script editor</li>
+<li>Source editor</li>
 <li>Console</li>
 <li>Workspace</li>
 <li>Multi-purpose-panel</li>
@@ -180,7 +170,7 @@
 
 </article></slide><slide class=''><hgroup><h2>Using RStudio (II)</h2></hgroup><article  id="using-rstudio-ii">
 
-<p><strong>Basic Workflow:</strong></p>
+<p><strong>Basic Workflow</strong></p>
 
 <ul>
 <li>Edit in code editor (.r-file)</li>
@@ -193,107 +183,250 @@
 
 <ul>
 <li>Run code from editor: Select line and ctrl+Enter</li>
-<li>Change windows: ctrl+1, ctrl+2</li>
-<li>Purge dicconsole: ctrl+L</li>
-<li>„Arrow up“ gives you the last line of code in the console</li>
-<li>Alt+Shift+K to see all keyboard shortcuts</li>
-</ul>
-
-</article></slide><slide class=''><hgroup><h2>Using RStudio (III)</h2></hgroup><article  id="using-rstudio-iii">
-
-<p><strong>Basic Syntax:</strong></p>
-
-<ul>
-<li>Use # to comment code (will not be run)</li>
-<li>Case-sensitivity: <code>data</code> vs <code>Data</code></li>
-<li><p>Assigning objects: = and &lt;-</p>
-
-<ul>
-<li><code>i=5</code> or <code>i&lt;-5</code> stores the scalar <code>5</code> under the name <code>i</code> in your workspace</li>
-<li>Outputting works by calling the name: <code>i</code> +Enter</li>
-</ul></li>
-<li><p>Functions perform operations on the input given</p>
-
-<ul>
-<li>End in ()</li>
-<li><code>class(x)</code></li>
-</ul></li>
+<li>Switch between source and console: ctrl+1, ctrl+2</li>
+<li>Clear console: ctrl+L</li>
+<li>&#39;Arrow up&#39; gives you the last line of code in the console</li>
+<li>Press Alt+Shift+K to see all keyboard shortcuts</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Fundamentals of the R language</h2></hgroup><article  id="fundamentals-of-the-r-language">
 
-<p><strong>R is object-oriented</strong></p>
-
 <ul>
-<li><p>Objects are R&#39;s nouns and include (not exhaustive):</p>
-
-<ul>
-<li>character strings (e.g. words)</li>
-<li>numbers</li>
-<li>vectors of numbers or character strings</li>
-<li>matrices</li>
-<li>data frames</li>
-<li>lists</li>
-</ul></li>
+<li>Use # to comment code (will not be run)</li>
+<li>Case-sensitivity: <code>data</code> vs <code>Data</code></li>
+<li>Assigning objects: &lt;- and =</li>
 </ul>
+
+<pre class = 'prettyprint lang-r'># Assign the number 5 to an object called number
+number &lt;- 5
+number</pre>
+
+<pre >## [1] 5</pre>
+
+<pre class = 'prettyprint lang-r'># Assign the character string Hello World
+string &lt;- &quot;Hello World&quot;
+string</pre>
+
+<pre >## [1] &quot;Hello World&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Functions</h2></hgroup><article  id="functions">
+
+<p>Functions perform operations on the input given and end in ()</p>
+
+<pre class = 'prettyprint lang-r'># e.g. find the class of number
+class(number)</pre>
+
+<pre >## [1] &quot;numeric&quot;</pre>
+
+</article></slide><slide class=''><hgroup><h2>Operations on scalars</h2></hgroup><article  id="operations-on-scalars">
+
+<p>You can use R as a calculator:</p>
+
+<pre class = 'prettyprint lang-r'>2 + 3
+2 - 3
+2 * 3
+2 / 3</pre>
+
+<p>Functions on scalars:</p>
+
+<pre class = 'prettyprint lang-r'>a &lt;- 5
+factorial(a)</pre>
+
+<pre >## [1] 120</pre>
 
 </article></slide><slide class=''><hgroup><h2>Special values in R</h2></hgroup><article  id="special-values-in-r">
 
 <ul>
 <li><code>NA</code>: not available, missing</li>
 <li><code>NULL</code>: does not exist, is undefined</li>
-<li><code>TRUE</code>, <code>T</code>: logical true. <strong>Logical</strong> is also an object class.</li>
+<li><code>TRUE</code>, <code>T</code>: logical true</li>
 <li><code>FALSE</code>, <code>F</code>: logical false</li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>Operations on scalars</h2></hgroup><article  id="operations-on-scalars">
+</article></slide><slide class=''><hgroup><h2>Finding special values</h2></hgroup><article  id="finding-special-values">
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Function</th>
+<th align="left">Meaning</th>
+</tr>
+<tr class="odd">
+<td align="left"><code>is.na</code></td>
+<td align="left">Is the value <code>NA</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>is.null</code></td>
+<td align="left">Is the value <code>NULL</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>isTRUE</code></td>
+<td align="left">Is the value <code>TRUE</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>!isTRUE</code></td>
+<td align="left">Is the value <code>FALSE</code></td>
+</tr>
+</table>
+
+<pre class = 'prettyprint lang-r'>absent &lt;- NA
+is.na(absent)</pre>
+
+<pre >## [1] TRUE</pre>
+
+</article></slide><slide class=''><hgroup><h2>Operations</h2></hgroup><article  id="operations">
+
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Operator</th>
+<th align="left">Meaning</th>
+</tr>
+<tr class="odd">
+<td align="left"><code>&lt;</code></td>
+<td align="left">less than</td>
+</tr>
+<tr class="even">
+<td align="left"><code>&gt;</code></td>
+<td align="left">greater than</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>==</code></td>
+<td align="left">equal to</td>
+</tr>
+<tr class="even">
+<td align="left"><code>&lt;=</code></td>
+<td align="left">less than or equal to</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>&gt;=</code></td>
+<td align="left">greater than or equal to</td>
+</tr>
+<tr class="even">
+<td align="left"><code>!=</code></td>
+<td align="left">not equal to</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>a | b</code></td>
+<td align="left">a or b</td>
+</tr>
+<tr class="even">
+<td align="left"><code>a &amp; b</code></td>
+<td align="left">a and b</td>
+</tr>
+</table>
+
+</article></slide><slide class=''><hgroup><h2>Naming objects</h2></hgroup><article  id="naming-objects">
 
 <ul>
-<li>Can use it just like a calculator: 2+3 or 2^5</li>
-<li>Assign intermediate quantities</li>
-<li>Functions on scalars: factorial(x)</li>
-<li>Type of input: numeric</li>
+<li><p>Object names cannot have spaces</p>
+
+<ul>
+<li>Use <code>CamelCase</code>, <code>name_underscore</code>, or <code>name.period</code></li>
+</ul></li>
+<li><p>Avoid creating an object with the same name as a function (e.g. <code>c</code> and <code>t</code>) or special value (<code>NA</code>, <code>NULL</code>, <code>TRUE</code>, <code>FALSE</code>).</p></li>
+<li><p>Use descriptive object names</p></li>
+<li><p>Each object name must be unique in an environment.</p>
+
+<ul>
+<li>Assigning something to an object name that is already in use will overwrite the object&#39;s previous contents.</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=''><hgroup><h2>R is object-oriented</h2></hgroup><article  id="r-is-object-oriented">
+
+<p>Objects are R&#39;s nouns and include (not exhaustive):</p>
+
+<ul>
+<li>character strings</li>
+<li>numbers</li>
+<li>vectors of numbers or character strings</li>
+<li>matrices</li>
+<li>data frames</li>
+<li>lists</li>
 </ul>
 
 </article></slide><slide class=''><hgroup><h2>Vectors</h2></hgroup><article  id="vectors">
 
-<p><strong>A container of objects put together in an order</strong></p>
+<p>A vector is a container of objects put together in an order.</p>
 
-<ul>
-<li>Has a length, and each item holds something (or missing &#39;NA&#39;)</li>
-<li>Can define them using c() or numeric() (…)</li>
-<li>Can concatenate them</li>
-<li>Can find their length</li>
-<li>Can reference their components</li>
-</ul>
+<pre class = 'prettyprint lang-r'># Define a vector
+a &lt;- c(1,4,5)
+b &lt;- c(3,6,7)</pre>
 
-</article></slide><slide class=''><hgroup><h2>Vectors (II)</h2></hgroup><article  id="vectors-ii">
+<pre class = 'prettyprint lang-r'># Join multiple vectors
+ab &lt;- c(a,b)</pre>
 
-<p><strong>Operations on vectors</strong></p>
+<pre class = 'prettyprint lang-r'># Find vector length (number of its elements)
+length(a)</pre>
 
-<pre >sort(x), sum(x), mean(x),; median(x); var(x); sd(x); 
-sample(x,size,replace=FALSE); factorial(x)</pre>
+<pre class = 'prettyprint lang-r'># Reference vector components
+ab[4] # Index one element in vector
+ab[4:6] # Index several elements in a vector
+ab[ab==6] # Index with condition</pre>
 
-</article></slide><slide class=''><hgroup><h2>Vectors (III)</h2></hgroup><article  id="vectors-iii">
+</article></slide><slide class=''><hgroup><h2>Operations on vectors</h2></hgroup><article  id="operations-on-vectors">
 
-<p><strong>Task 1</strong></p>
+<table class = 'rmdtable'>
+<tr class="header">
+<th align="left">Operation</th>
+<th align="left">Meaning</th>
+</tr>
+<tr class="odd">
+<td align="left"><code>sort(x)</code></td>
+<td align="left">sort a vector</td>
+</tr>
+<tr class="even">
+<td align="left"><code>sum(x)</code></td>
+<td align="left">sum of vector elements</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>mean(x)</code></td>
+<td align="left">arithmetic mean</td>
+</tr>
+<tr class="even">
+<td align="left"><code>median(x)</code></td>
+<td align="left">median value</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>var(x)</code></td>
+<td align="left">variance</td>
+</tr>
+<tr class="even">
+<td align="left"><code>sd(x)</code></td>
+<td align="left">standard deviation</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>factorial(x)</code></td>
+<td align="left">factorial of a number</td>
+</tr>
+</table>
 
-<ul>
-<li><p>Calculate the mean of the vector 1,99,3,4,5,6,8.</p>
+</article></slide><slide class=''><hgroup><h2>Task 1</h2></hgroup><article  id="task-1">
 
-<ul>
-<li>What‘s the mean if you out the &#39;outlier&#39;?</li>
-</ul></li>
-</ul>
+<p>Calculate the mean of the vector 1,99,3,4,5,6,8. What‘s the mean if you out the &#39;outlier&#39;?</p>
+
+</article></slide><slide class=''><hgroup><h2>Task 1 (solution)</h2></hgroup><article  id="task-1-solution">
+
+<p>Calculate the mean of the vector 1,99,3,4,5,6,8. What‘s the mean if you out the &#39;outlier&#39;?</p>
+
+<pre class = 'prettyprint lang-r'># Defining vector using sequence between 3 and 6
+a &lt;- c(1,99,3:6,8) 
+mean(a)</pre>
+
+<pre >## [1] 18</pre>
+
+<pre class = 'prettyprint lang-r'># Calculate the mean of a but exclude the highest number
+mean(a[a!=max(a)])</pre>
+
+<pre >## [1] 4.5</pre>
 
 </article></slide><slide class=''><hgroup><h2>Matrices</h2></hgroup><article  id="matrices">
 
-<ul>
-<li><p>A square 2 dimensional container i.e. vectors combined by row or column**</p></li>
-<li><p>Must specify number or rows and columns**</p>
+<p>A Matrix is a square 2 dimensional container, i.e. vectors combined by row or column</p>
 
 <ul>
-<li>matrix(x,nrow,ncol,byrow)</li>
+<li><p>Must specify number or rows and columns <code>matrix(x,nrow,ncol,byrow)</code></p>
+
+<ul>
 <li>x: vector of length nrow*ncol</li>
 <li>nrow: number of rows</li>
 <li>ncol: number of columns</li>
@@ -301,98 +434,169 @@ sample(x,size,replace=FALSE); factorial(x)</pre>
 </ul></li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>Matrices (II)</h2></hgroup><article  id="matrices-ii">
+</article></slide><slide class=''><hgroup><h2>Task 2</h2></hgroup><article  id="task-2">
 
-<p><strong>Task 2</strong></p>
+<p>Assign a 6 x 10 matrix with 1,2,3,…,60 as the data.</p>
+
+</article></slide><slide class=''><hgroup><h2>Task 2 (solution)</h2></hgroup><article  id="task-2-solution">
+
+<p>Assign a 6 x 10 matrix with 1,2,3,…,60 as the data.</p>
+
+<pre class = 'prettyprint lang-r'>m &lt;- matrix(1:60, nrow=6, ncol=10)
+m</pre>
+
+<pre >##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]    1    7   13   19   25   31   37   43   49    55
+## [2,]    2    8   14   20   26   32   38   44   50    56
+## [3,]    3    9   15   21   27   33   39   45   51    57
+## [4,]    4   10   16   22   28   34   40   46   52    58
+## [5,]    5   11   17   23   29   35   41   47   53    59
+## [6,]    6   12   18   24   30   36   42   48   54    60</pre>
+
+</article></slide><slide class=''><hgroup><h2>Referencing matrices</h2></hgroup><article  id="referencing-matrices">
 
 <ul>
-<li><p>Assign a 6 x 10 matrix with 1,2,3,…,60 as the data.</p>
+<li><p>Like vectors, you can reference matrices by elements</p>
 
 <ul>
-<li><code>matrix(x,nrow,ncol,byrow)</code></li>
+<li><code>a[i,j]</code> refers to the ith row, jth column element of object <code>a</code></li>
 </ul></li>
-</ul>
-
-</article></slide><slide class=''><hgroup><h2>Matrices (III)</h2></hgroup><article  id="matrices-iii">
-
-<p><strong>Referencing matrices</strong></p>
+<li><p>Can also reference rows/columns, these are vectors</p>
 
 <ul>
-<li>Like vectors, can reference matrices by elements</li>
-<li><code>a[i,j]</code> refers to the ith row, jth column element of a</li>
-<li>Can also reference rows/columns, these are vectors</li>
 <li><code>a[i,]</code> is ith row, <code>a[,j]</code> is jth column</li>
-</ul>
-
-</article></slide><slide class=''><hgroup><h2>Matrices (IV)</h2></hgroup><article  id="matrices-iv">
-
-<p><strong>Task 3</strong></p>
-
-<ul>
-<li><p>Extract the 9th column of the matrix from the previous problem.</p>
-
-<ul>
-<li>How can you find the 4th element in the 9th column?</li>
 </ul></li>
 </ul>
+
+</article></slide><slide class=''><hgroup><h2>Task 3</h2></hgroup><article  id="task-3">
+
+<p>Extract the 9th column of the matrix from the previous problem. How can you find the 4th element in the 9th column?</p>
+
+</article></slide><slide class=''><hgroup><h2>Task 3 (solution)</h2></hgroup><article  id="task-3-solution">
+
+<p>Extract the 9th column of the matrix from the previous problem. How can you find the 4th element in the 9th column?</p>
+
+<pre class = 'prettyprint lang-r'>m[,9]</pre>
+
+<pre >## [1] 49 50 51 52 53 54</pre>
+
+<pre class = 'prettyprint lang-r'>m[4,9]</pre>
+
+<pre >## [1] 52</pre>
+
+<pre class = 'prettyprint lang-r'>m[,9][4]</pre>
+
+<pre >## [1] 52</pre>
 
 </article></slide><slide class=''><hgroup><h2>For() loops</h2></hgroup><article  id="for-loops">
 
+<p>For() loops are used to loop around a vector/matrix to do something.</p>
+
+<pre class = 'prettyprint lang-r'>m &lt;- matrix(1:5, nrow=1, ncol=5)
+m</pre>
+
+<pre >##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    2    3    4    5</pre>
+
+<pre class = 'prettyprint lang-r'>for (j in 1:3){
+     m[,j]=0
+}
+m</pre>
+
+<pre >##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    0    4    5</pre>
+
+</article></slide><slide class=''><hgroup><h2>For() loops (II)</h2></hgroup><article  id="for-loops-ii">
+
+<p>You can also &#39;nest&#39; a <code>for()</code> loop in another <code>for()</code> loop</p>
+
+<pre class = 'prettyprint lang-r'>m &lt;- matrix(1:15, nrow=3, ncol=5)
+for (i in 1:2){
+  for (j in 1:4){
+    m[i,j]=0
+  }
+}
+m</pre>
+
+<pre >##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    0    0    0   13
+## [2,]    0    0    0    0   14
+## [3,]    3    6    9   12   15</pre>
+
+</article></slide><slide class=''><hgroup><h2>Task 4</h2></hgroup><article  id="task-4">
+
+<p>Create a matrix with <code>matrix(1:20,nrow=4,ncol=5)</code> and another with <code>matrix(NA,nrow=4,ncol=5)</code>. Adapt the second to the first matrix using <code>for()</code></p>
+
 <ul>
-<li><p>Used to loop around a vector/matrix to do something</p></li>
-<li><pre >for (i in 1:10) {
- a[i]= **something**
-}</pre></li>
-<li>Does &#39;something&#39; to a[1],a[2],a[3],…, a[10]</li>
-<li><p>You can &#39;nest&#39; a <code>for()</code> in another <code>for()</code></p></li>
+<li>hint: define a &#39;counter‘ variable that increments by 1 each time you move to the next cell</li>
 </ul>
 
-</article></slide><slide class=''><hgroup><h2>For() loops</h2></hgroup><article  id="for-loops-1">
+</article></slide><slide class=''><hgroup><h2>Task 4 (solution)</h2></hgroup><article  id="task-4-solution">
 
-<p><strong>Task 4</strong></p>
+<p>Create a matrix with <code>matrix(1:20,nrow=4,ncol=5)</code> and another with <code>matrix(NA,nrow=4,ncol=5)</code>. Adapt the second to the first matrix using <code>for()</code></p>
 
-<ul>
-<li>Create a matrix with <code>matrix(1:20,nrow=4,ncol=5)</code> and another with <code>matrix(NA,nrow=4,ncol=5)</code></li>
-<li><p>Adapt the second to the first matrix using <code>for()</code></p>
+<pre class = 'prettyprint lang-r'>counter=1
+m1 &lt;- matrix(1:20,nrow=4,ncol=5)
+m2 &lt;- matrix(NA,nrow=4,ncol=5)
+for (j in 1:5){
+  for (i in 1:4){
+    m2[i,j]=counter
+    counter=counter+1
+  }
+}</pre>
 
-<ul>
-<li>(hint: define a &#39;counter‘ variable that increments by 1 each time you move to the next cell)</li>
-</ul></li>
-<li><p>How can you fill the matrix by rows?</p>
+</article></slide><slide class=''><hgroup><h2>Task 4 (alternative solution)</h2></hgroup><article  id="task-4-alternative-solution">
 
-<ul>
-<li>(i.e. so it looks like matrix(1:20,nrow=4,ncol=5, byrow=T)</li>
-</ul></li>
-</ul>
+<p>Create a matrix with <code>matrix(1:20,nrow=4,ncol=5)</code> and another with <code>matrix(NA,nrow=4,ncol=5)</code>. Adapt the second to the first matrix using <code>for()</code></p>
+
+<pre class = 'prettyprint lang-r'>m1 &lt;- matrix(1:20,nrow=4,ncol=5)
+m2 &lt;- matrix(NA,nrow=4,ncol=5)
+for (j in 1:5){
+  for (i in 1:4){
+    m2[i,j]=m1[i,j]
+  }
+}</pre>
 
 </article></slide><slide class=''><hgroup><h2>If() statements</h2></hgroup><article  id="if-statements">
 
-<ul>
-<li>Used to make conditions on executing some code</li>
-<li><pre >if (**condition**) { 
-**action**
-}</pre></li>
-<li>If condition is true, action is done</li>
-<li>Tests for conditions: <code>==; &gt;; &lt;; &gt;=; &lt;=; !=</code></li>
-<li><code>==</code>and <code>=</code>are different</li>
-<li>Check condition on its own first</li>
-</ul>
+<p>If() statements are used to make conditions on executing some code. If condition is true, action is done.</p>
 
-</article></slide><slide class=''><hgroup><h2>If() statements (II)</h2></hgroup><article  id="if-statements-ii">
+<pre class = 'prettyprint lang-r'>a &lt;- 3
+b &lt;- 4
+number &lt;- 0
+if(a&lt;b){
+  number=number+1
+}
+number</pre>
 
-<p><strong>Task 6</strong></p>
+<pre >## [1] 1</pre>
 
-<ul>
-<li><code>a=sample(c(4,0),20,replace=TRUE)</code></li>
-<li><code>b=matrix(a,nrow=4,ncol=5)</code></li>
-<li>Now recode all the 4s into 1s using if() and for() statements.</li>
-</ul>
+<p>Tests for conditions: <code>==; &gt;; &lt;; &gt;=; &lt;=; !=</code></p>
+
+</article></slide><slide class=''><hgroup><h2>Task 6</h2></hgroup><article  id="task-6">
+
+<p>Create the two objects <code>a &lt;- sample(c(4,0),20,replace=TRUE)</code> and <code>m &lt;- matrix(a,nrow=4,ncol=5)</code>. Now recode all the 4s into 1s using if() and for() statements.</p>
+
+</article></slide><slide class=''><hgroup><h2>Task 6 (solution)</h2></hgroup><article  id="task-6-solution">
+
+<p>Create the objects <code>a &lt;- sample(c(4,0),20,replace=TRUE)</code> and <code>b &lt;- matrix(a,nrow=4,ncol=5)</code>. Now recode all the 4s into 1s in <code>b</code> using if() and for() statements.</p>
+
+<pre class = 'prettyprint lang-r'>a &lt;- sample(c(4,0),20,replace=TRUE)
+b &lt;- matrix(a,nrow=4,ncol=5)
+
+for (j in 1:5){
+  for (i in 1:4){
+    if (b[i,j]==4){
+      b[i,j]=1       
+    }
+  }
+}</pre>
 
 </article></slide><slide class=''><hgroup><h2>Help</h2></hgroup><article  id="help">
 
 <ul>
-<li>Type help( ) to see documentation</li>
-<li>Check the R-Introduction (Syllabus)</li>
+<li>Type help() (<code>or ?</code>) to see documentation</li>
+<li>Read Wickham &amp; Grolemund&#39;s <em>R For Data Science</em> Handbook</li>
 <li>Check out the help function for a couple of functions used in today&#39;s course to see &#39;what is what&#39; in the documentation</li>
 </ul>
 
