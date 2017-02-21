@@ -1,5 +1,5 @@
 ---
-title: "Quantitative Content Analysis: Lecture 2"
+title: "Quantitative Content Analysis: Lecture 3"
 author: "Olga Kononykhina"
 date: "22 Februar 2017"
 output:
