@@ -1,0 +1,421 @@
+---
+title: "Quantitative Content Analysis: Lecture 2"
+author: "Olga Kononykhina"
+date: "22 Februar 2017"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
+  ioslides_presentation:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Today's Outline
+
+**Intro to R (Part II)**
+
+- Vectors, matrices, data frames, lists
+- Working with data sets
+- Loops and conditions
+- Creating and applying functions
+
+## Vectors
+
+A vector is a container of objects put together in an order.
+```{r, echo = T}
+# Define a vector
+a <- c(1,4,5)
+b <- c(3,6,7)
+```
+
+```{r, echo = T}
+# Join multiple vectors
+ab <- c(a,b)
+```
+
+```{r, echo = T, eval = F}
+# Find vector length (number of its elements)
+length(a)
+```
+
+```{r, echo = T, eval = F}
+# Reference vector components
+ab[4] # Index one element in vector
+ab[4:6] # Index several elements in a vector
+ab[ab==6] # Index with condition
+```
+
+
+## Operations on vectors
+
+| Operation     | Meaning                  |
+| --------      | ------------------------ |
+| `sort(x)`     | sort a vector            |
+| `sum(x)`      | sum of vector elements   |
+| `mean(x)`     | arithmetic mean          |
+| `median(x)`   | median value             |
+| `var(x)`      | variance                 |
+| `sd(x)`       | standard deviation       |
+| `factorial(x)`| factorial of a number    |
+
+
+## Task 1
+
+Calculate the mean of the vector 1,99,3,4,5,6,8. What‘s the mean if you out the 'outlier'?
+
+
+## Task 1 (solution)
+
+Calculate the mean of the vector 1,99,3,4,5,6,8. What‘s the mean if you out the 'outlier'?
+
+```{r, echo = T}
+# Defining vector using sequence between 3 and 6
+a <- c(1,99,3:6,8) 
+mean(a)
+
+# Calculate the mean of a but exclude the highest number
+mean(a[a!=max(a)])
+```
+
+
+## Matrices
+
+A Matrix is a square 2 dimensional container, i.e. vectors combined by row or column
+
+- Must specify number or rows and columns `matrix(x,nrow,ncol,byrow)`
+
+    + x: vector of length nrow*ncol
+    + nrow: number of rows
+    + ncol: number of columns
+    + byrow: TRUE or FALSE, specifies direction of input
+
+
+## Task 2
+
+Assign a 6 x 10 matrix with 1,2,3,…,60 as the data.
+
+
+## Task 2 (solution)
+
+Assign a 6 x 10 matrix with 1,2,3,…,60 as the data.
+
+```{r, echo = T}
+m <- matrix(1:60, nrow=6, ncol=10)
+m
+```
+
+
+## Referencing matrices
+
+- Like vectors, you can reference matrices by elements
+
+    + `a[i,j]` refers to the ith row, jth column element of object `a`
+
+- Can also reference rows/columns, these are vectors
+
+    + `a[i,]` is ith row, `a[,j]` is jth column
+
+
+## Task 3
+
+Extract the 9th column of the matrix from the previous problem. How can you find the 4th element in the 9th column?
+    
+    
+## Task 3 (solution)
+
+Extract the 9th column of the matrix from the previous problem. How can you find the 4th element in the 9th column?
+
+```{r, echo = T}
+m[,9]
+m[4,9]
+m[,9][4]
+```
+
+
+## Data frames
+
+Data frames are a two-dimensional container of vectors with the same length. Each column (vector) can be of a different class and can be indexed with `[,]` or `$`. You can use functions like `nrow()`, `ncol()`, `dim()`, `colnames()`, or `rownames()` get information about your df.
+
+```{r, echo = T}
+# Combine two vectors into a data frame
+number <- c(1, 2, 3, 4)
+name <- c('John', 'Paul', 'George', 'Ringo')
+df <- data.frame(number, name, stringsAsFactors = FALSE)
+df
+```
+
+
+## Lists
+
+A list is an object containing other objects that can have different lengths and classes.
+
+```{r, echo = T}
+# Create a list with three objects of different lengths
+list1 <- list(beatles = c('John', 'Paul', 'George', 'Ringo'),
+              alive = c('Paul', 'Ringo'), albums = 1:13)
+list1
+```
+
+
+## R's build-in data sets
+There are a number of example data sets available within `R`.
+
+```{r, echo = T, eval=FALSE}
+# List internal data sets:
+data()
+```
+
+```{r, echo = T, eval = F}
+# Load swiss data set:
+data(swiss)
+# Find data description:
+?swiss
+```
+
+
+## Importing data
+
+You can read  data and assign it to an object. The most frequently used functions to read data include:
+
+- `load()`: To open `.RData` files
+- `read.csv()`: Reads csv file
+- `read.table()`: Is more general and allows to set separators
+- `read.dta()`: From `foreign` library, used to read Stata files
+
+
+## Exporting data
+
+You can export your data in various formats:
+
+- `save()`: Only readable in R, but can store multiple objects
+- `write.csv()`: Writes matrix/dataframe to csv
+- `write.table`: Writes matrix to a tab delimited text file
+- `write.dta()`: Writing in Stata format, requires `foreign` library
+
+
+## For() loops
+
+For() loops are used to loop around a vector/matrix to do something.
+```{r, echo = T}
+m <- matrix(1:5, nrow=1, ncol=5)
+m
+for (j in 1:3){
+     m[,j]=0
+}
+m
+```
+
+
+## For() loops (II)
+
+You can also 'nest' a `for()` loop in another `for()` loop
+```{r, echo = T}
+m <- matrix(1:15, nrow=3, ncol=5)
+for (i in 1:2){
+  for (j in 1:4){
+    m[i,j]=0
+  }
+}
+m
+```
+
+
+## Task 4
+
+Create a matrix with `matrix(1:20,nrow=4,ncol=5)` and another with `matrix(NA,nrow=4,ncol=5)`. Adapt the second to the first matrix using `for()`
+
+- hint: define a 'counter‘ variable that increments by 1 each time you move to the next cell
+
+
+## Task 4 (solution)
+
+Create a matrix with `matrix(1:20,nrow=4,ncol=5)` and another with `matrix(NA,nrow=4,ncol=5)`. Adapt the second to the first matrix using `for()`
+
+
+```{r, echo = T}
+counter=1
+m1 <- matrix(1:20,nrow=4,ncol=5)
+m2 <- matrix(NA,nrow=4,ncol=5)
+for (j in 1:5){
+  for (i in 1:4){
+    m2[i,j]=counter
+    counter=counter+1
+  }
+}
+```
+
+## Task 4 (alternative solution)
+
+Create a matrix with `matrix(1:20,nrow=4,ncol=5)` and another with `matrix(NA,nrow=4,ncol=5)`. Adapt the second to the first matrix using `for()`
+
+
+```{r, echo = T}
+m1 <- matrix(1:20,nrow=4,ncol=5)
+m2 <- matrix(NA,nrow=4,ncol=5)
+for (j in 1:5){
+  for (i in 1:4){
+    m2[i,j]=m1[i,j]
+  }
+}
+```
+
+
+## If() statements 
+
+If() statements are used to make conditions on executing some code. If condition is true, action is done. 
+```{r, echo = T}
+a <- 3
+b <- 4
+number <- 0
+if(a<b){
+  number=number+1
+}
+number
+```
+
+Tests for conditions: `==; >; <; >=; <=; !=`
+
+
+## Task 5
+
+Create the two objects `a <- sample(c(4,0),20,replace=TRUE)` and 
+`m <- matrix(a,nrow=4,ncol=5)`. Now recode all the 4s into 1s using if() and for() statements.
+
+
+## Task 5 (solution)
+
+Create the objects `a <- sample(c(4,0),20,replace=TRUE)` and 
+`b <- matrix(a,nrow=4,ncol=5)`. Now recode all the 4s into 1s in `b` using if() and for() statements.
+
+```{r, echo = T}
+a <- sample(c(4,0),20,replace=TRUE)
+b <- matrix(a,nrow=4,ncol=5)
+
+for (j in 1:5){
+  for (i in 1:4){
+    if (b[i,j]==4){
+      b[i,j]=1       
+    }
+  }
+}
+```
+
+
+## Creating Functions
+
+If you want to repeat an operation it is often useful to create your own Function. Functions have names, inputs and outputs and simplify your code.
+
+```{r, echo = T}
+# Find the sample mean of a vector
+fun_mean <- function(x){
+    sum(x) / length(x)
+}
+
+## Find the mean
+data(swiss)
+fun_mean(x = swiss$Infant.Mortality)
+```
+
+
+## Task 6
+
+Write a function that takes a number and doubles it.
+
+
+## Task 6 (solution)
+
+Write a function that takes a number and doubles it.
+
+```{r, echo = T}
+double <- function(x){
+output <- x * 2
+output
+}
+double(8)
+```
+
+
+## Apply function
+
+`Apply` allows you to apply a function to every row or every column. This can be done with a `for()` loop, but `apply()` is usually much faster and simpler. `Apply()` takes the following form: `apply(X, MARGIN, FUN, ...)`.
+
+```{r, echo = T}
+m <- matrix(c(1:10, 11:20), nrow = 10, ncol = 2)
+# mean of the rows
+apply(m, 1, mean)
+# mean of the columns
+apply(m, 2, mean)
+```
+
+
+## Task 7
+
+Load up the build-in R dataset 'iris' and use `apply()` to get the mean of the first 4 variables, by species.
+
+
+## Task 7 (solution)
+
+Load up the build-in R dataset 'iris' and use `apply()` to get the mean of the first 4 variables.
+
+```{r, echo = T}
+attach(iris)
+apply(iris[,1:4], 2, mean)
+```
+
+
+## Packages
+
+You can greatly expand the number of functions by installing and loading 
+user-created packages.
+
+```{r, eval=FALSE}
+# Install dplyr package
+install.packages('dplyr')
+
+# Load dplyr package
+library(dplyr)
+```
+
+You can also call a function directly from a specific package with the double
+colon operator (`::`).
+
+```{r, eval=FALSE}
+Grouped <- dplyr::group_by(combined_df, character_vector)
+```
+
+
+## Piping
+
+Piping allows to pass a value forward to a function call and produces faster compilation and enhanced code readability. In `R` use `%>%` from the `dplyr` package.
+
+
+```{r, echo = T}
+# Not piped:
+values <- rnorm(1000, mean = 10)
+value_mean <- mean(values)
+round(value_mean, digits = 2)
+```
+
+```{r, echo = T, message=F}
+# Piped:
+library(dplyr)
+rnorm(1000, mean = 10) %>% mean() %>% round(digits = 2)
+```
+
+## Help
+
+- Type help() (`or ?`) to see documentation 
+- Read Wickham & Grolemund's _R For Data Science_ Handbook
+- Check out the help function for a couple of functions used in today's course to see 'what is what' in the documentation
+
+## Next week
+
+- Tidy data
+- Data manipulation with `dplyr`
+- Visualizations with `ggplot`
