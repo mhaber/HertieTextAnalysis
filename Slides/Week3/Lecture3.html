@@ -472,7 +472,7 @@ apply(m, 2, mean)</pre>
 
 </article></slide><slide class=''><hgroup><h2>Task 7</h2></hgroup><article  id="task-7">
 
-<p>Load up the build-in R dataset &#39;iris&#39; and use <code>apply()</code> to get the mean of the first 4 variables, by species.</p>
+<p>Load up the build-in R dataset &#39;iris&#39; and use <code>apply()</code> to get the mean of the first 4 variables.</p>
 
 </article></slide><slide class=''><hgroup><h2>Task 7 (solution)</h2></hgroup><article  id="task-7-solution">
 
@@ -488,7 +488,15 @@ apply(iris[,1:4], 2, mean)</pre>
 
 <p>You can greatly expand the number of functions by installing and loading user-created packages.</p>
 
+<pre class = 'prettyprint lang-r'># Install dplyr package
+install.packages(&#39;dplyr&#39;)
+
+# Load dplyr package
+library(dplyr)</pre>
+
 <p>You can also call a function directly from a specific package with the double colon operator (<code>::</code>).</p>
+
+<pre class = 'prettyprint lang-r'>Grouped &lt;- dplyr::group_by(combined_df, character_vector)</pre>
 
 </article></slide><slide class=''><hgroup><h2>Piping</h2></hgroup><article  id="piping">
 
@@ -499,13 +507,13 @@ values &lt;- rnorm(1000, mean = 10)
 value_mean &lt;- mean(values)
 round(value_mean, digits = 2)</pre>
 
-<pre >## [1] 9.98</pre>
+<pre >## [1] 10.02</pre>
 
 <pre class = 'prettyprint lang-r'># Piped:
 library(dplyr)
 rnorm(1000, mean = 10) %&gt;% mean() %&gt;% round(digits = 2)</pre>
 
-<pre >## [1] 10.02</pre>
+<pre >## [1] 9.98</pre>
 
 </article></slide><slide class=''><hgroup><h2>Help</h2></hgroup><article  id="help">
 

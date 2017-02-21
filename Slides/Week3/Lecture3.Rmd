@@ -356,7 +356,7 @@ apply(m, 2, mean)
 
 ## Task 7
 
-Load up the build-in R dataset 'iris' and use `apply()` to get the mean of the first 4 variables, by species.
+Load up the build-in R dataset 'iris' and use `apply()` to get the mean of the first 4 variables.
 
 
 ## Task 7 (solution)
@@ -374,7 +374,7 @@ apply(iris[,1:4], 2, mean)
 You can greatly expand the number of functions by installing and loading 
 user-created packages.
 
-```{r, eval=FALSE}
+```{r, echo=T, eval=FALSE}
 # Install dplyr package
 install.packages('dplyr')
 
@@ -385,7 +385,7 @@ library(dplyr)
 You can also call a function directly from a specific package with the double
 colon operator (`::`).
 
-```{r, eval=FALSE}
+```{r, echo = T, eval=FALSE}
 Grouped <- dplyr::group_by(combined_df, character_vector)
 ```
 
