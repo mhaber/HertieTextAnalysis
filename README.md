@@ -33,7 +33,7 @@ A certificate is granted for regular attendance, active participation, the compl
 
 | Name                    | Percent of Final Mark | Due              |
 | ----------------------- | --------------------- | ---------------- |
-| Assignment 1       | 15%                   | 8 March        |
+| Assignment 1       | 15%                   | 15 March        |
 | Assignment 2       | 15%                   | 5 April       |
 | Research Project       | 50%                   | 15 May      |
 | Attendance/active Participation | 20%           | -                |
