@@ -64,18 +64,5 @@ Finally, the two core background readings for the course are:
 > Krippendorff, K., 2004: Content Analysis: An introduction to its methodology. Thousand Oaks: Sage.
 > •	Neuendorf, K.A., 2002: The Content Analysis Guidebook. Thousand Oaks: Sage.
  of improvements that can be made for clarity, relevance, and to fix typos.
- 
-## Part I: Motivation and getting started
 
-### Week 1: Introduction to the Course + Introduction to the R Programming Language (1)
-
-In this week I will first give a general overview of the course objectives and key concepts. We will also make sure that you are able to install and load all of the necessary software required for the course.
-
-Then, we will learn the basics of the R statistical programming language for data handling and simple descriptive statistics, as well as general computer science problem solving skills.
-
-#### [Slides (1)](https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/b6dcedf9bae651ff9823b79f62dae3281fe964b3/LectureSlides/Lecture1/Lecture1.html)
-
-#### [Slides (2)](https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/d2f347182d1dcb56524620aeb583e975b9e0ec03/LectureSlides/Lecture2/Lecture2.html)
-
-#### Readings:
 
