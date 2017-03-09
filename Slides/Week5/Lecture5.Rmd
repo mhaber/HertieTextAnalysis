@@ -3,11 +3,6 @@ title: "Quantitative Content Analysis: Lecture 5"
 author: "Matthias Haber"
 date: "08 March 2017"
 output:
-  beamer_presentation:
-    theme: "CambridgeUS"
-    colortheme: "default"
-    fonttheme: "default"
-    fig_caption: false
   ioslides_presentation:
   slidy_presentation: default
 ---
@@ -136,7 +131,7 @@ output2 <- lm(rating ~ complaints + privileges + learning,
               data=attitude)
 
 # Create table
-stargazer(output, output2, type="html", 
+stargazer(output, type="html", 
           out="attitude.htm")
 ```
 
@@ -216,7 +211,7 @@ df2
 
 The `dplyr` package has powerful capabilities to manipulate data frames quickly.
 
-```{r, echo=T, warning=F}
+```{r, echo=T, warning=F, message = F}
 library(dplyr)
 data(swiss)
 swiss$ID <- rownames(swiss) # Create ID
@@ -287,7 +282,7 @@ Text contains political positions, conflict, issue importance, valence and much 
 
 **Reliability:**
 
-- Are measures that are derived from text analysis be stable when repeated?
+- Are measures that are derived from text analysis stable when repeated?
 - Several ways to measure/test for reliability
 
 **Validity:**
