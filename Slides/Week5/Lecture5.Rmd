@@ -3,6 +3,11 @@ title: "Quantitative Content Analysis: Lecture 5"
 author: "Matthias Haber"
 date: "08 March 2017"
 output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
   ioslides_presentation:
   slidy_presentation: default
 ---
