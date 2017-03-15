@@ -58,13 +58,14 @@ Simple example from Krippendorff (2004):
     + Use the number of values as the distribution to draw from: 20 balls with 6 labelled as '1' and 14 labelled '0'
 
 - Calculate the expected number of results:
+$$e_{00} = n_0 * \frac{(n_0-1)}{n-1};  
+e_{11} = n_1 * \frac{(n_1-1)}{n-1}$$
+$$e_{01} = e_{10} = n_0 * \frac{(n_1)}{n-1} = 4.42$$
 
-$$e_{01} = \frac{n_0}{n} * \frac{n_1}{n-1} * n; e_{01} = 4.42$$
-
-|             | 0   | 1   | 
+|             | 0   | 1   |
 | ------------| --- | --- |
-| 0           | 9.6 | 4.4 | 
-| 1           | 4.4 | 1.6 |  
+| 0           | 9.6 | 4.4 |
+| 1           | 4.4 | 1.6 |
 | # of values | 14  | 6   |
 
 ## Calculating Krippendorff's $\alpha$ by hand (II)
@@ -144,14 +145,14 @@ The CMP was originally created by Ian Budge und David Robertson in 1979.
     + Words, sentences, paragraphs, pages, chapters…
     + Quasi-Sentence
 
-- Unitizing/Recording unit in the CMP: Quasi sentence 
+- Unitizing/Recording unit in the CMP: Quasi-sentence 
 
     + "an argument or phrase which is the verbal expression of one political idea or issue" (Klingemann 2006)
 
 
-## Unitizing: CMP „Quasi-Sentences“
+## Unitizing: CMP "Quasi-sentences"
 
-**Identifying quasi sentences**
+**Identifying quasi-sentences**
 
 - Natural sentence as starting reference
 - Natural sentences are split, if they include two or more seperate ideas/issues
@@ -211,6 +212,150 @@ knitr::include_graphics("img/6-1.png")
     + Not all categories have such a negation
     + 13 „left“ and 13 „right“ Categories
     + Codes are singular: Each quasi sentence gets one code
+
+## CMP coding categories: Domain 1
+
+**Domain 1: External Relations**
+
+- 101 Foreign Special Relationships: Positive
+- 102 Foreign Special Relationships: Negative
+- 103 Anti-Imperialism: Positive
+
+    - 103.1 State Centred Anti-Imperialism
+    -  \textcolor{red}{103.2 Foreign Financial Influence}
+- \textcolor{blue}{104 Military: Positive}
+- \textcolor{red}{105 Military: Negative}
+- \textcolor{red}{106 Peace: Positive} 
+- \textcolor{red}{107 Internationalism: Positive}
+- 108 European/LA Integration: Positive
+- 109 Internationalism: Negative
+- 110 European/LA Integration: Negative
+
+
+## CMP coding categories: Domain 2
+
+**Domain 2: Freedom and Democracy**
+
+- \textcolor{blue}{201 Freedom and Human Rights: Positive}
+- 201.1 Freedom
+- 201.2 Human Rights
+- \textcolor{red}{202 Democracy}
+
+    - 202.1 General: Positive
+    - 202.2 General: Negative
+    - 202.3 Representative Democracy: Positive
+    - 202.4 Direct Democracy: Positive
+- \textcolor{blue}{203 Constitutionalism: Positive}
+- 204 Constitutionalism: Negative
+
+## CMP coding categories: Domain 3
+
+**Domain 3: Political System**
+
+- 301 Decentralisation: Positive
+- 302 Centralisation: Positive
+- 303 Governmental and Administrative Efficiency: Positive
+- 304 Political Corruption: Negative
+- \textcolor{blue}{305 Political Authority: Positive}
+
+    - 305.1 Political Authority: Party Competence
+    - 305.2 Political Authority: Personal Competence
+    - 305.3 Political Authority: Strong government
+    - 305.4 Pre-Democratic Elites: Positive
+    - 305.5 Pre-Democratic Elites: Negative
+    - 305.6 Rehabilitation and Compensation
+
+## CMP coding categories: Domain 4
+
+**Domain 4: Economy**
+
+- \textcolor{blue}{401 Free-Market Economy: Positive}
+- \textcolor{blue}{402 Incentives: Positive}
+- \textcolor{red}{403 Market Regulation: Positive}
+- \textcolor{red}{404 Economic Planning: Positive}
+- 405 Corporatism: Positive
+- \textcolor{red}{406 Protectionism: Positive}
+- \textcolor{blue}{407 Protectionism: Negative}
+- 408 Economic Goals
+- 409 Keynesian Demand Management: Positive
+- 410 Economic Growth
+- 411 Technology and Infrastructure: Positive
+- \textcolor{red}{412 Controlled Economy: Positive}
+- \textcolor{red}{413 Nationalisation: Positive}
+
+
+## CMP coding categories: Domain 4 (II)
+
+- \textcolor{blue}{414 Economic Orthodoxy: Positive}
+- 415 Marxist Analysis: Positive
+- 416 Anti-Growth Economy: Positive
+
+    - 416.1 Anti-Growth Economy: Positive
+    - 416.2 Sustainability: Positive
+    
+    
+## CMP coding categories: Domain 5
+
+**Domain 5: Welfare and Quality of Life**
+
+- 501 Environmental Protection: Positive
+- 502 Culture: Positive
+- 503 Equality: Positive
+- \textcolor{red}{504 Welfare State Expansion}
+- \textcolor{blue}{505 Welfare State Limitation}
+- \textcolor{red}{506 Education Expansion}
+- 507 Education Limitation
+
+## CMP coding categories: Domain 6
+
+**Domain 6: Fabric of Society**
+
+- \textcolor{blue}{601 National Way of Life: Positive}
+
+    - 601.1 General
+    - 601.2 Immigration: Negative
+- 602 National Way of Life: Negative
+
+    - 602.1 General
+    - 602.2 Immigration: Positive
+- \textcolor{blue}{603 Traditional Morality: Positive}
+- 604 Traditional Morality: Negative
+- \textcolor{blue}{605 Law and Order}
+
+    - 605.1 Law and Order: Positive
+    - 605.2 Law and Order: Negative
+
+    
+## CMP coding categories: Domain 6 (II)
+
+- \textcolor{blue}{606 Civic Mindedness: Positive}
+
+    - 606.1 General
+    - 606.2 Bottom-Up Activism
+- 607 Multiculturalism: Positive
+
+    - 607.1 General
+    - 607.2 Immigrant Integration: Diversity - 607.3 Indigenous rights: Positive
+- 608 Multiculturalism: Negative
+
+    - 608.1 General
+    - 608.2 Immigrant Integration: Assimilation - 608.3 Indigenous rights: Negative
+
+## CMP coding categories: Domain 7
+
+**Domain 7: Social Groups**
+
+- \textcolor{red}{701 Labour Groups: Positive}
+- 702 Labour Groups: Negative
+- 703 Agriculture and Farmers
+- 703.1 Agriculture and Farmers: Positive
+- 703.2 Agriculture and Farmers: Negative
+- 704 Middle Class and Professional Groups: Positive
+- 705 Minority Groups: Positive
+- 706 Non-Economic Demographic Groups: Positive
+
+
+000 No meaningful category applies
 
 
 ## Coding Conservative Party UK 2015
@@ -309,6 +454,20 @@ Example: 200 Quasi Sentences, 40 right, 100 left
 - Additional right/left codes enter logged: An additional right/left code shifts the scale stronger in the middle than in the extremes
 
 
-## Next week
 
-- Working with CMP data, challenges
+## CMP Coding Exercise
+
+In this exercise your goal is to code parts of a manifesto using the CMP coding categories. Please carefully read the instructions and the coding scheme and code each quasisentence to the best of your ability.
+
+**Group 1: UK Independent Party 2015**
+
+<https://goo.gl/forms/v7VZBvZ3leQ9dWaA3>
+
+**Group 2: Liberal Party of Canada 2015**
+
+<https://goo.gl/forms/TiMaEl30SRLC5oL82>
+
+## Next Session
+
+- NO CLASS NEXT WEEK!
+- Challenges involved in working with CMP data
