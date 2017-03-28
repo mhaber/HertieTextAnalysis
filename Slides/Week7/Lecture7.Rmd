@@ -1,0 +1,196 @@
+---
+title: "Quantitative Content Analysis: Lecture 7"
+author: "Matthias Haber"
+date: "29 March 2017"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
+  ioslides_presentation:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Today's Outline
+
+- Assignment 1
+- Coding Excercise
+- CMP: Validity and reliability issues
+- Assignment 2
+
+
+## Reliability & Validity
+
+**Reliability**
+
+- Are measures that are derived from text analysis be stable when repeated?
+
+**Validity**
+
+- Does the text analysis measure what it is supposed to measure
+
+
+## CMP: Reliability within
+
+**Misclassification problem**
+
+- Ambuiguities and overlap in the Coding scheme:
+
+    + '401: Free enterprise: Favorable mentions of free enterprise capitalismm; superiority of individual enterprise over state control systems…'
+    +'402: Incentives: Need for wage and tax policies to induce enterprise'
+    +'501: Environmental protection'
+
+- CMP data are coded only once
+- No estimate for the uncertainty resulting from the coding process
+
+
+##  CMP: Reliability within (II)
+
+**The CMP‘s argument**
+
+- Reliability exists for the data set as a whole
+
+    +i.e. for the RiLe scale or where substantial sub-sets of the data are input together the data has high reliability and validity
+
+- Misclassification should 'cancel out'
+
+    +Miclassification within left/right/uncoded codes occur
+    +Misclassification between the groups of codes should be rare
+
+
+## Are misclassifications self cancelling?
+
+**Mickhaylov et al. 2010**
+
+- Texts used in CMP-training; 
+
+    +Manifestos for UK and NZ
+    +'Gold-Standard'/'Master coding' gives 'true' coding
+
+- Actual CMP-coders code manifestos 
+
+    +'Worst' 25% of coders are excluded in evaluation 
+    +(GB: 17, NZ: 12)
+- Coding of the two manifestos only uses ~20 of the 57 categories
+- Correct unitizing is given for coders
+
+
+## 1. Intercoder-reliability
+
+**Intercoder-reliability**
+
+- Agreement between coders
+- Calculated at
+
+    +Full 56 categories level
+    +RiLe-relevant level, i.e. with right, left and other as categories, only
+
+- .35 - .36 for GB and .4 - .47 for NZ
+
+    +Remember Krippendorff's suggestion from the first slide…
+
+
+## 2. Coder-Master reliability
+
+**Coder-Master reliability**
+- Agreement between coders and gold standard
+- Suggested kappa: .8
+
+
+```{r, out.width = "250px"}
+knitr::include_graphics("img/7-1.png")
+```
+
+
+## 2. Coder-Master reliability (II)
+
+- CMP argument: Disagreement cancels out
+
+    +Data set as a whole is relable and valid
+    +Misclassifications occur, but do not bias RiLe
+    +i.e. occur between codes pertaining to the same side
+
+- Misclassifications:
+
+    +Gold standard gives true classification
+    +Are misclassification within right/left/other or across?
+    +Measured on the RiLe level, i.e. three categories
+
+
+## 3. True vs. observed RiLe classification
+
+
+```{r, out.width = "250px"}
+knitr::include_graphics("img/7-2.png")
+```
+
+
+## Frequently misclassified categories
+
+- Look at the probability for a code to be coded as left, right or other
+- Compare with true coding (gold standard)
+
+```{r, out.width = "200px"}
+knitr::include_graphics("img/7-3.png")
+```
+
+
+## Frequently misclassified categories (II)
+
+- Coders assign truly left/right codes to the opposite categories (305 & 404)
+- Truly uncoded text (headings etc.) are more likely to be coded left or right than other
+
+- Additional noise?
+- Bias in the RiLe scale?
+
+
+## Coding Exercise
+
+```{r echo = F}
+library(readr)
+library(irr)
+ukip <- readr::read_csv("data/codingUkip.csv") %>% 
+  dplyr::mutate_all(funs(as.integer(as.factor(.)))) %>% 
+  dplyr::select(-Timestamp, coder=`Email Address`, everything())
+
+libdem <- readr::read_csv("data/codingLibdem.csv") %>% 
+  dplyr::mutate_all(funs(as.integer(as.factor(.)))) %>% 
+  dplyr::select(-Timestamp, coder=`Email Address`, everything())
+
+kripp.alpha(as.matrix(ukip[,-1])) 
+kripp.alpha(as.matrix(libdem[,-1])) 
+```
+
+
+
+
+
+## Assignment 2
+
+1. Register with the Manifesto Project and download the full CMP data set (v 2016b) directly into R using the manifestoR package.
+
+2. Chose a country of your interest and create an overview for the positions provided by the CMP (RiLe, Planeco, etc.) for each party. Display your results graphically.
+
+3. Analyze an entire party family (e.g. green parties) across multiple countries (>2) and choose an appropriate graphical presentation.
+
+4. Calculate an alternative right-left measures from Week 6 for **either** 2. and 3. and describe how results change.
+
+5. Exclude some of the most unreliable categories described in Mickhaylov et al. 2012 for **either** 2. or 3., recalculate and describe possible changes.
+
+
+## Assignment 2 (II)
+
+- Assignment is due on April 11
+- Submit code via email
+- Hand in short report in class
+
+## Next Session
+
+- NO CLASS NEXT WEEK!
+- Challenges involved in working with CMP data

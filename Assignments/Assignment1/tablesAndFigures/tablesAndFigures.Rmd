@@ -1,0 +1,68 @@
+---
+title: "Assignment 1: Tables and Figures"
+author: "Matthias Haber"
+date: "March 28, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T)
+knitr::opts_chunk$set(warning=F)
+knitr::opts_chunk$set(message=F)
+```
+
+```{r packages}
+library(dplyr)
+library(ggplot2)
+library(stargazer)
+library(coefplot)
+```
+
+## Summary of Church Attendance per District
+
+```{r descrip table}
+load("descript.RData")
+knitr::kable(descript[,2:7], format = "pandoc", digits=2, caption = "Descriptive Statistics")
+```
+
+\newpage
+
+```{r descript plot, fig.cap="Mean Church Attendance per Constituency"}
+load("churchAtt.RData")
+gles2 %>%
+  ggplot(aes(x = churchAttMean)) +
+  geom_density(alpha = 0.7, fill = "grey30", color = NA) +
+  ylab('Density') + xlab("") +
+  scale_x_continuous(breaks = c(1,7), labels = c("Never", "More often")) +
+  theme_bw()
+```
+
+\newpage
+
+## Regression models
+```{r linear regression, results='asis'}
+load("model1.RData")
+load("model2.RData")
+stargazer::stargazer(model1, model2, 
+                     title = "Determinants of MPs' Positions in the Debate on Regulating PGD",
+                     header=F, model.numbers = F,dep.var.labels.include = F,
+                     dep.var.caption = "DV: Position",
+                     column.labels  = c("Base model","Full model"))
+```
+
+```{r logit regression, echo = T, results='asis'}
+load("model3.RData")
+load("model4.RData")
+stargazer::stargazer(model3, model4, 
+                     title = "Determinants of Roll-Call Vote Decision on Regulating PGD",
+                     header=F, model.numbers = F, dep.var.caption = "DV: Vote",
+                     dep.var.labels.include = F,
+                     column.labels  = c("Base model","Full model"))
+```
+
+\newpage
+
+```{r coef plot, fig.height=6, fig.width=10, fig.cap="Determinants of MP'Position and Roll Call"}
+plot <- coefplot::multiplot(model2, model4, single = F, lwdInner = 0.5, title = "", xlab = "", ylab = "", legend.position = "none", names = c("MPs' Position", "Roll Call Vote"))
+plot + scale_color_manual(values=c("black","black"))
+```
