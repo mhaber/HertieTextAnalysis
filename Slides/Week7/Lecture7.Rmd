@@ -13,17 +13,138 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align= "center")
 ```
 
 
-## Today's Outline
+## Today's outline
 
 - Assignment 1
 - Coding Excercise
 - CMP: Validity and reliability issues
 - Assignment 2
 
+
+## Coding exercise
+
+Thank you for completing the coding exercise
+
+- Overall inter-coder agreement: 0.245 (UKIP); 0.266 (Liberal)
+
+    + (comparable to Mikhaylov et al. study – and that one included former coders – 0.35)
+    
+. . . and the QCA top coders are . . .
+
+
+## Top coders
+
+|                 | Kappa       | Party   | 
+| --------------- | ----------  | ------- |
+| Jeffrey         | .072        | UKIP    |
+| Christopher     | .056        | UKIP    |
+| Chiara          | .053        | UKIP    |
+| Léa             | .041        | Liberal |
+| Matthias K.     | .036        | Liberal |
+| Akira           | .029        | Liberal |
+| Robin           | .010        | UKIP    |
+| Riccardo        | .000        | UKIP    |
+
+Mikhailov et al.'s top coder: .72
+
+
+## Manifesto Project (some) limitations
+
+- Coding scheme developed in the 1980s applicable today?
+- Measurement uncertainty?
+- Reliability? How many categories can a human coder process?
+- Validity?
+- Left-right measure influenced by non-left right issues
+- Fixed (but hidden) end points in L-R measure
+
+
+
+
+## CMP coding scheme issues
+
+**Misclassification problem**
+
+- Ambuiguities and overlap in the coding scheme:
+
+    + '401: Free enterprise: Favorable mentions of free enterprise capitalism; superiority of individual enterprise over state control systems…'
+    + '402: Incentives: Need for wage and tax policies to induce enterprise'
+    + '501: Environmental protection'
+
+- CMP data are coded only once
+- No estimate for the uncertainty resulting from the coding process
+
+
+##  CMP coding scheme issues (II)
+
+**The CMP‘s argument**
+
+- Reliability exists for the data set as a whole
+
+    + i.e. for the RiLe scale or where substantial sub-sets of the data are input together the data has high reliability and validity
+
+- Misclassification should 'cancel out'
+
+    + Miclassification within left/right/uncoded codes occur
+    + Misclassification between the groups of codes should be rare
+
+## Are misclassifications self cancelling?
+
+**Mickhaylov et al. 2010**
+
+- Texts used in CMP-training; 
+
+    + Manifestos for UK and NZ
+    + 'Gold-Standard'/'Master coding' gives 'true' coding
+
+- Actual CMP-coders code manifestos 
+
+    + 'Worst' 25% of coders are excluded in evaluation 
+    + (GB: 17, NZ: 12)
+    
+- Coding of the two manifestos only uses ~20 of the 57 categories
+- Correct unitizing is given for coders
+
+
+## Stochastic text generation
+
+```{r, out.width = "150px"}
+knitr::include_graphics("img/7-1.png")
+```
+
+## Stochastic text generation (II)
+
+**Benoit, Laver, and Mikhaylov 2009**
+
+- Text generation is stochastic
+
+    + there are many different possible texts that could have been written to communicate the same position
+
+- Idea: simulate those texts through non-parametric bootstrapping (sampling with replacement) of quasi-sentences
+
+- Then generate uncertainty intervals for categories or some aggregate measure (e.g. Left-Right scale) from those simulated datasets
+
+    + Issue of empty categories
+
+
+## Measurement uncertainty
+
+Movement on Environmental Policy of German CDU-CSU over Time
+
+```{r, out.width = "250px"}
+knitr::include_graphics("img/7-2.png")
+```
+
+## Measurement uncertainty (II)
+
+With those estimates of measurement uncertainty (reg. stochastic text generation), we can ask whether changes in party policy according to the CMP data are real or just noise?
+
+```{r, out.width = "200px"}
+knitr::include_graphics("img/7-3.png")
+```
 
 ## Reliability & Validity
 
@@ -36,75 +157,30 @@ knitr::opts_chunk$set(echo = FALSE)
 - Does the text analysis measure what it is supposed to measure
 
 
-## CMP: Reliability within
-
-**Misclassification problem**
-
-- Ambuiguities and overlap in the Coding scheme:
-
-    + '401: Free enterprise: Favorable mentions of free enterprise capitalismm; superiority of individual enterprise over state control systems…'
-    +'402: Incentives: Need for wage and tax policies to induce enterprise'
-    +'501: Environmental protection'
-
-- CMP data are coded only once
-- No estimate for the uncertainty resulting from the coding process
-
-
-##  CMP: Reliability within (II)
-
-**The CMP‘s argument**
-
-- Reliability exists for the data set as a whole
-
-    +i.e. for the RiLe scale or where substantial sub-sets of the data are input together the data has high reliability and validity
-
-- Misclassification should 'cancel out'
-
-    +Miclassification within left/right/uncoded codes occur
-    +Misclassification between the groups of codes should be rare
-
-
-## Are misclassifications self cancelling?
-
-**Mickhaylov et al. 2010**
-
-- Texts used in CMP-training; 
-
-    +Manifestos for UK and NZ
-    +'Gold-Standard'/'Master coding' gives 'true' coding
-
-- Actual CMP-coders code manifestos 
-
-    +'Worst' 25% of coders are excluded in evaluation 
-    +(GB: 17, NZ: 12)
-- Coding of the two manifestos only uses ~20 of the 57 categories
-- Correct unitizing is given for coders
-
-
 ## 1. Intercoder-reliability
 
 **Intercoder-reliability**
 
-- Agreement between coders
-- Calculated at
+- Agreement between coders calculated at
 
-    +Full 56 categories level
-    +RiLe-relevant level, i.e. with right, left and other as categories, only
+    + Full 56 categories level
+    + RiLe-relevant level, i.e. with right, left and other as categories, only
 
 - .35 - .36 for GB and .4 - .47 for NZ
 
-    +Remember Krippendorff's suggestion from the first slide…
+    + Remember Krippendorff's suggestion from the first slide…
 
 
 ## 2. Coder-Master reliability
 
 **Coder-Master reliability**
+
 - Agreement between coders and gold standard
 - Suggested kappa: .8
 
 
 ```{r, out.width = "250px"}
-knitr::include_graphics("img/7-1.png")
+knitr::include_graphics("img/7-4.png")
 ```
 
 
@@ -112,22 +188,22 @@ knitr::include_graphics("img/7-1.png")
 
 - CMP argument: Disagreement cancels out
 
-    +Data set as a whole is relable and valid
-    +Misclassifications occur, but do not bias RiLe
-    +i.e. occur between codes pertaining to the same side
+    + Data set as a whole is relable and valid
+    + Misclassifications occur, but do not bias RiLe
+    + i.e. occur between codes pertaining to the same side
 
 - Misclassifications:
 
-    +Gold standard gives true classification
-    +Are misclassification within right/left/other or across?
-    +Measured on the RiLe level, i.e. three categories
+    + Gold standard gives true classification
+    + Are misclassification within right/left/other or across?
+    + Measured on the RiLe level, i.e. three categories
 
 
 ## 3. True vs. observed RiLe classification
 
 
 ```{r, out.width = "250px"}
-knitr::include_graphics("img/7-2.png")
+knitr::include_graphics("img/7-5.png")
 ```
 
 
@@ -137,7 +213,7 @@ knitr::include_graphics("img/7-2.png")
 - Compare with true coding (gold standard)
 
 ```{r, out.width = "200px"}
-knitr::include_graphics("img/7-3.png")
+knitr::include_graphics("img/7-6.png")
 ```
 
 
@@ -149,27 +225,56 @@ knitr::include_graphics("img/7-3.png")
 - Additional noise?
 - Bias in the RiLe scale?
 
+## Validity issues (I)
 
-## Coding Exercise
+The logit transformation is useful for policy dimensions that are confrontational. Let’s examine the positions on the environment in the CMP dataset:
 
-```{r echo = F}
-library(readr)
-library(irr)
-ukip <- readr::read_csv("data/codingUkip.csv") %>% 
-  dplyr::mutate_all(funs(as.integer(as.factor(.)))) %>% 
-  dplyr::select(-Timestamp, coder=`Email Address`, everything())
+*PER501 (Environmental Protection: Positive) Preservation of countryside, forests, etc.; general preservation of natural resources against selfish interests; proper use of national parks; soil banks, etc; environmental improvement.*
 
-libdem <- readr::read_csv("data/codingLibdem.csv") %>% 
-  dplyr::mutate_all(funs(as.integer(as.factor(.)))) %>% 
-  dplyr::select(-Timestamp, coder=`Email Address`, everything())
+## Validity issues (II)
 
-kripp.alpha(as.matrix(ukip[,-1])) 
-kripp.alpha(as.matrix(libdem[,-1])) 
+Positions are not particularly well correlated with expert survey data
+
+```{r, out.width = "250px"}
+knitr::include_graphics("img/7-7.png")
 ```
 
 
+## Validity issues (III)
+
+No party writes: "We will destroy the environment". So what might be the natural opposite?
+
+ - Trade-off between environmental regulation and economic growth.
+
+The corresponding logit scale:
+
+```{r, out.width = "250px"}
+knitr::include_graphics("img/7-8.png")
+```
 
 
+## Left-Right scale issues
+
+What about another unsatisfying property of the Left-Right scale: fixed– but hidden – endpoints?
+
+- Rather than taking the difference between right and left categories, use the balance or relative emphasis of each (Lowe et al. 2011)
+
+Empirical logit:
+$$\theta=log\frac{R + .5}{L + .5}=log(R+.5)-log(L+.5)$$
+
+## Left-Right scale issues (II)
+
+```{r, out.width = "240px"}
+knitr::include_graphics("img/7-9.png")
+```
+
+
+## Some final thoughts
+
+- Misclassified categories are likely
+- Cross-national and over time comparison by assumption through coding scheme
+- Not a model of the data generating process – some texts are not manifestos
+- Definition of quasi-sentence unclear
 
 ## Assignment 2
 
