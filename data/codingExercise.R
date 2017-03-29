@@ -52,8 +52,8 @@ liberal <- rbind(liberalGold, liberalCoding) %>%
 # Reliability & agreement -------------------------------------------------
 
 # Kripp alpha
-irr::kripp.alpha(as.matrix(ukipCoding[1:5, -1])) 
-irr::kripp.alpha(as.matrix(liberalCoding[1:3, -1])) 
+irr::kripp.alpha(as.matrix(ukipCoding[1:6, -1])) 
+irr::kripp.alpha(as.matrix(liberalCoding[1:6, -1])) 
 
 #Cohen's Kappa
 ukipKappa1 <- irr::kappa2(ukip[,c(3,2)])$value
@@ -61,15 +61,19 @@ ukipKappa2 <- irr::kappa2(ukip[,c(4,2)])$value
 ukipKappa3 <- irr::kappa2(ukip[,c(5,2)])$value
 ukipKappa4 <- irr::kappa2(ukip[,c(6,2)])$value
 ukipKappa5 <- irr::kappa2(ukip[,c(7,2)])$value
+ukipKappa6 <- irr::kappa2(ukip[,c(8,2)])$value
 
 liberalKappa1 <- irr::kappa2(liberal[,c(3,2)])$value
 liberalKappa2 <- irr::kappa2(liberal[,c(4,2)])$value
 liberalKappa3 <- irr::kappa2(liberal[,c(5,2)])$value
+liberalKappa4 <- irr::kappa2(liberal[,c(6,2)])$value
+liberalKappa5 <- irr::kappa2(liberal[,c(7,2)])$value
+liberalKappa6 <- irr::kappa2(liberal[,c(8,2)])$value
 
-ukipKappa <- data.frame(rater = names(ukip)[3:7], kappa =
+ukipKappa <- data.frame(rater = names(ukip)[3:8], kappa =
                         c(ukipKappa1, ukipKappa2, ukipKappa3,
-                          ukipKappa4, ukipKappa5))
+                          ukipKappa4, ukipKappa5, ukipKappa6))
 
-liberalKappa <- data.frame(rater = names(liberal)[3:5],
-                           kappa = c(liberalKappa1, liberalKappa2, 
-                                     liberalKappa3))
+liberalKappa <- data.frame(rater = names(liberal)[3:8],
+                           kappa = c(liberalKappa1, liberalKappa2, liberalKappa3,
+                                     liberalKappa4, liberalKappa5, liberalKappa6))

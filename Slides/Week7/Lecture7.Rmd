@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE, fig.align= "center")
 ## Today's outline
 
 - Assignment 1
-- Coding Excercise
+- Coding Exercise
 - CMP: Validity and reliability issues
 - Assignment 2
 
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(echo = FALSE, fig.align= "center")
 
 Thank you for completing the coding exercise
 
-- Overall inter-coder agreement: 0.245 (UKIP); 0.266 (Liberal)
+- Overall inter-coder agreement: 0.274 (UKIP); 0.222 (Liberal)
 
     + (comparable to Mikhaylov et al. study – and that one included former coders – 0.35)
     
@@ -41,12 +41,16 @@ Thank you for completing the coding exercise
 |                 | Kappa       | Party   | 
 | --------------- | ----------  | ------- |
 | Jeffrey         | .072        | UKIP    |
+| Yuzhu           | .067        | UKIP    |
 | Christopher     | .056        | UKIP    |
+| Maria           | .054        | Liberal |
 | Chiara          | .053        | UKIP    |
 | Léa             | .041        | Liberal |
 | Matthias K.     | .036        | Liberal |
 | Akira           | .029        | Liberal |
+| Marilia         | .012        | Liberal |
 | Robin           | .010        | UKIP    |
+| Raju            | .0005       | Liberal |
 | Riccardo        | .000        | UKIP    |
 
 Mikhailov et al.'s top coder: .72
@@ -62,13 +66,11 @@ Mikhailov et al.'s top coder: .72
 - Fixed (but hidden) end points in L-R measure
 
 
-
-
 ## CMP coding scheme issues
 
 **Misclassification problem**
 
-- Ambuiguities and overlap in the coding scheme:
+- Ambiguities and overlap in the coding scheme:
 
     + '401: Free enterprise: Favorable mentions of free enterprise capitalism; superiority of individual enterprise over state control systems…'
     + '402: Incentives: Need for wage and tax policies to induce enterprise'
@@ -93,7 +95,7 @@ Mikhailov et al.'s top coder: .72
 
 ## Are misclassifications self cancelling?
 
-**Mickhaylov et al. 2010**
+**Mikhailov et al. 2010**
 
 - Texts used in CMP-training; 
 
@@ -125,7 +127,7 @@ knitr::include_graphics("img/7-1.png")
 
 - Idea: simulate those texts through non-parametric bootstrapping (sampling with replacement) of quasi-sentences
 
-- Then generate uncertainty intervals for categories or some aggregate measure (e.g. Left-Right scale) from those simulated datasets
+- Then generate uncertainty intervals for categories or some aggregate measure (e.g. Left-Right scale) from those simulated data sets
 
     + Issue of empty categories
 
@@ -227,7 +229,7 @@ knitr::include_graphics("img/7-6.png")
 
 ## Validity issues (I)
 
-The logit transformation is useful for policy dimensions that are confrontational. Let’s examine the positions on the environment in the CMP dataset:
+The logit transformation is useful for policy dimensions that are confrontational. Let’s examine the positions on the environment in the CMP data set:
 
 *PER501 (Environmental Protection: Positive) Preservation of countryside, forests, etc.; general preservation of natural resources against selfish interests; proper use of national parks; soil banks, etc; environmental improvement.*
 
@@ -286,16 +288,18 @@ knitr::include_graphics("img/7-9.png")
 
 4. Calculate an alternative right-left measures from Week 6 for **either** 2. and 3. and describe how results change.
 
-5. Exclude some of the most unreliable categories described in Mickhaylov et al. 2012 for **either** 2. or 3., recalculate and describe possible changes.
+5. Exclude some of the most unreliable categories described in Mikhailov et al. 2012[^1] for **either** 2. or 3., recalculate and describe possible changes.
 
+[^1]: Mikhaylov, S., Laver, M., Benoit, K. 2012. Coder reliability and misclassification
+in the human coding of party manifestos. *Political Analysis* 20 (1): 78–91.
 
-## Assignment 2 (II)
+## Assignment 2 Deliverables
 
-- Assignment is due on April 11
-- Submit code via email
+- Assignment is due on April 12
 - Hand in short report in class
+- Attach code as an appendix or write it in Markdown style
+- Please indicate if you have worked in teams
 
 ## Next Session
 
-- NO CLASS NEXT WEEK!
-- Challenges involved in working with CMP data
+- Computerized text analysis – quantifying text

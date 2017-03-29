@@ -24,10 +24,10 @@ mpData <- readstata13::read.dta13("Assignments/Assignment1/mpData.dta") # in sta
 levels(gles$vndkirchg) # inspect variable coding
 
 gles2 <- gles %>% 
-  dplyr::filter(as.integer(vndkirchg) < 8) %>% # filter out missings
+  dplyr::filter(as.integer(vndkirchg)<8) %>% # filter out missings
   dplyr::group_by(wkrnr) %>% # group by constituency
-  dplyr::summarize(churchAttMean = mean(as.integer(vndkirchg)),
-                   churchAttDummy = sum(as.integer(vndkirchg) %in% c(1:4)) /
+  dplyr::summarize(churchAttMean = mean(as.integer(vndkirchg), na.rm=T),
+                   churchAttDummy = sum(as.integer(vndkirchg) %in% c(4:7)) /
                      n()) %>% # district summaries
     dplyr::ungroup() # remember to ungroup
 save(gles2, file = "Assignments/Assignment1/tablesAndFigures/churchAtt.RData")
