@@ -13,8 +13,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", 
-                      message = F, warning = F)
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, warning = F)
 ```
 
 ## Today's outline
@@ -41,7 +40,7 @@ knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center",
 
 ## Quanteda 
 
-**quanteda** is an R package for managing and analyzing text, created by Kenneth Benoit, Kohei Watanabe, Paul Nulty, Adam Obeng, Haiyan Wang, Ben Lauderdale, and Will Lowe. You can install **quanteda** from inside RStudio, from the Tools...Install Packages menu, or simply using
+quanteda is an R package for managing and analyzing text, created by Kenneth Benoit, Kohei Watanabe, Paul Nulty, Adam Obeng, Haiyan Wang, Ben Lauderdale, and Will Lowe. You can install quanteda from inside RStudio, from the Tools...Install Packages menu, or simply using
 
 ```{r, eval = F}
 install.packages("quanteda")
@@ -57,39 +56,6 @@ devtools::install_github("kbenoit/quanteda")
 Note that on Windows platforms, it is also recommended that you install the [RTools suite](https://cran.r-project.org/bin/windows/Rtools/), and for OS X, that you install [XCode](https://itunes.apple.com/gb/app/xcode/id497799835?mt=12) from the App Store.
 
 
-## Explore quanteda
-
-```{r}
-# Load the package
-library(quanteda)
-```
-
-```{r, eval = F}
-# Summarize some texts in the Irish 2010 budget speech corpus
-summary(data_corpus_irishbudget2010)
-```
-
-```{r}
-# Create a document-feature matrix from this corpus
-ibDfm <- quanteda::dfm(data_corpus_irishbudget2010,
-                       verbose = F)
-```
-
-```{r}
-# Look at the top occuring features
-quanteda::topfeatures(ibDfm)
-```
-
-
-## Explore quanteda (II)
-
-```{r, fig.width=4, fig.height=2}
-# Make a word cloud
-quanteda::textplot_wordcloud(ibDfm, min.freq=25,
-                             random.order=F)
-```
-
-
 ## Text analysis workflow
 
 The goal is to simplify text and reduce dimensionality of the dfm created from it. In a nutshell, we want to filter relevant information and discard irrelevant information.
@@ -99,7 +65,7 @@ The goal is to simplify text and reduce dimensionality of the dfm created from i
 
     + reading files  
     + creating a corpus
-    + addingdocument variables and metadata
+    + adding document variables and metadata
 
 2.  Defining and delimiting documents
 
@@ -132,5 +98,270 @@ The goal is to simplify text and reduce dimensionality of the dfm created from i
     + collapsed by:
         * stemming
         * converting to lower case
+
+
+## Analysis of documents and features
+
+1. From a corpus.  
+
+These steps don't necessarily require the processing steps above:
+
+- `quanteda::kwic`
+- `quanteda::textstat_lexdiv`
+- `summary`
+
+
+## Analyzing a dfm
+
+2. From a dfm -- after `dfm` on the processed document and features.
+
+```{r, eval=FALSE}
+dfm                           print
+convert                       removeFeatures
+docfreq                       similarity
+docnames                      dfm_sort
+featnames                     textmodel
+textstat_lexdiv               topfeatures
+ndoc                          dfm_trim
+ntoken                        weight
+plot                          settings
+show
+```
+
+## Creating and exploring a corpus
+
+The quanteda packages comes with a built-in set of inaugural addresses from US Presidents. The `summary` command will output the name of each text along with the number of types, tokens and sentences contained in the text.
+
+```{R, echo = T}
+library(quanteda)
+summary(data_corpus_inaugural[1:3])
+oneText <- data_corpus_inaugural[1]
+nchar(oneText)
+```
+
+## Tokenization
+
+To tokenize a text is to split it into units, most commonly words, which can be counted and to form the basis of a quantitative analysis. The quanteda function `tokenize` can be used on a character vector, a vector of character vectors, or a corpus.
+
+```{r}
+tokens <- tokenize("Do not use semicolons. They are 
+                   transvestite hermaphrodites representing
+                   absolutely nothing. All they do is show
+                   you've been to college.")
+vec <- c(one = 'This is text one',
+         two = 'This is the second text')
+```
+
+```{r, eval = F}
+tokenize(vec)
+```
+
+## Tokenization (II)
+
+The `tokenize` function has a number useful parameters. To remove punctuation, set the `removePunct` argument to be TRUE. We can combine this with the `toLower` function to get a cleaned and tokenized version of our text.
+
+```{r}
+tokenize(toLower(vec), removePunct = T)
+```
+
+Using this function with the inaugural addresses:
+
+```{r}
+inaugTokens <- tokenize(toLower(inaugTexts))
+```
+
+
+## Creating a dfm
+
+Once each text has been split into words, we can use the `dfm` function to create a matrix of counts of the occurrences of each word in each document. `dfm()` works on a variety of object types, including character vectors, corpus objects, and tokenized text objects.  
+
+```{r}
+library(dplyr)
+inaugDfm <- dfm(inaugTokens) %>% 
+    trim(min_docfreq = 5, min_count = 10) %>% 
+        weight(type = 'tfidf')
+```
+
+
+## Extract corpus objects
+
+To extract texts from a quanteda corpus object we can use the `texts` function.
+
+```{r}
+mytexts <- texts(subset(inaugCorpus,
+                        President == "Washington"))
+```
+
+
+## Adding metadata
+
+If we are interested in analysing the texts with respect to some other variables, we can create a corpus object to associate the texts with this metadata. For example, we can use the `docvars` option to the `corpus` command to record the party with which each text is associated:
+
+```{r, message = F}
+dv <- data.frame(Party = c('dem', 'rep', 'rep', 'dem'))
+recentCorpus <- corpus(inaugTexts[53:56], docvars = dv)
+summary(head(recentCorpus))
+```
+
+## Combining features
+
+We can use this metadata to combine features across documents when creating a dfm:
+
+```{r, fig.width=8, fig.height=8, eval = F}
+partyDfm <- dfm(recentCorpus, groups = 'Party',
+                ignoredFeatures = (stopwords('english')))
+plot(partyDfm, comparison = TRUE)
+```
+
+
+## Investigating character vectors
+
+The fundamental type in which R stores text is the character vector. The most simple case is a character vector of length one. The `nchar` function returns the number of characters in a character vector. 
+
+```{r}
+s1 <- 'This is my example text'
+length(s1)
+nchar(s1)
+```
+
+The `nchar` function is vectorized, meaning that when called on a vector it returns a value for each element of the vector.
+```{r }
+s2 <- c('This is', 'my example text.', 'So imaginative.')
+nchar(s2)
+```
+
+## Task 1
+
+Which were the longest and shortest inaugural addresses speeches?
+
+## Task 1: Solution
+
+Which were the longest and shortest inaugural addresses speeches?
+
+```{r}
+which.max(nchar(inaugTexts))
+
+which.min(nchar(inaugTexts))
+```
+
+## String extraction
+
+It is not possible to index into a string in R:
+
+```{r}
+s1 <- 'This is a very informative example sentences.'
+s1[6:9]
+```
+
+To extract a substring, instead we use the `substr` function. 
+
+```{r}
+substr(s1, 6,9)
+```
+
+## String extraction (II)
+
+Often we would like to split character vectors to extract a term of interest. This is possible using the `strsplit` function.
+
+```{r}
+s1 <- 'split this string'
+strsplit(s1, 'this')
+```
+
+Consider the names of the inaugural texts:
+
+```{r}
+names(inaugTexts)[1:3]
+parts <- strsplit(names(inaugTexts), '-')
+years <- sapply(parts, function(x) x[1])
+pres <-  sapply(parts, function(x) x[2])
+```
+
+## Joining character vectors
+
+The `paste` function is used to join character vectors together. The way in which the elements are combined depends on the values of the `sep` and `collapse` arguments:
+
+```{r}
+paste('one','two','three')
+paste('one','two','three', sep='_')
+paste(years[1:3], pres[1:3], sep='-')
+paste(years[1:3], pres[1:3], collapse='-')
+```
+
+
+## Lower case
+
+`toLower` and `toUpper` from the quanteda package change the case of character vectors.
+```{r}
+s1 <- 'NASA sent a rocket into space.'
+
+quanteda::toLower(s1)
+
+quanteda::toUpper(s1)
+```
+
+
+## Comparing character vectors
+
+Character vectors can be compared using the `==`  and `%in%` operators:
+
+```{r}
+tolower(s1) == toupper(s1)
+'apples'=='oranges'
+'pears' == 'pears'
+
+c1 <- c('apples', 'oranges', 'pears')
+'pears' %in% c1
+c2 <- c('bananas', 'pears')
+c2 %in% c1
+```
+
+## Searching and replacing within text
+
+The base functions for searching and replacing within text are `grep` and `gsub`. The `grep` command tests whether a pattern occurs within a string:
+
+```{r}
+grep('pear', 'these are oranges')
+grep('orange', c('apples', 'oranges', 'pears'))
+grep('pears', c('apples', 'oranges', 'pears'))
+```
+
+The `gsub` command substitutes one pattern for another within a string:
+
+```{r}
+gsub('oranges', 'apples', 'these are oranges')
+```
+
+## String replacement
+
+The `stringr` and `stringi` packages provide more extensive and more organized interfaces for string manipulation.
+
+For an overview of the most frequently used functions, see the vignette: <https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html>.
+
+```{r}
+library(stringr)
+fruits <- c("one apple", "two pears", "three bananas")
+str_replace(fruits, "[aeiou]", "-")
+str_replace_all(fruits, "[aeiou]", "-")
+str_replace(fruits, "([aeiou])", "\\1\\1")
+str_replace(fruits, "[aeiou]", c("1", "2", "3"))
+```
+
+## Word boundaries
+
+```{r}
+words <- c("These are some words. These are more words.")
+str_count(words, boundary("word"))
+str_count(words, boundary("sentence"))
+
+str_split(words, boundary("sentence"))[[1]]
+```
+
+
+## Trim whitespace
+
+```{r}
+str_trim("  String with trailing and leading white space\t")
+```
 
 
