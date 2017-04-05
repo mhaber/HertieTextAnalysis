@@ -117,15 +117,15 @@ These steps don't necessarily require the processing steps above:
 You can load texts from different file sources. The quanteda package can construct a `corpus` object from several input sources:
 
 1.  a character vector object  
-    ```{r}
+```{r}
     myTinyCorpus <- corpus(inaugTexts[1:2], notes = "G.W.")
-    ```
+```
     
 2.  a `VCorpus` object from the **tm** package
-    ```{r}
+```{r}
     data(crude, package = "tm")
     myTmCorpus <- corpus(crude)
-    ```
+```
 
 3.  a `corpusSource` object, created by the `readtext()` function from the **readtext** package (most likely scenario). Currently, you have to download the package from Github:
 
