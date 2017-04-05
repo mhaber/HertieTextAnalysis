@@ -1,0 +1,44 @@
+---
+title: "Quantitative Content Analysis: Lecture 8"
+author: "Matthias Haber"
+date: "05 April 2017"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
+  ioslides_presentation:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, warning = F)
+```
+
+## Today's outline
+
+- Text analysis workflow
+- Creating a text corpus
+- Preprocessing
+- Regular Expressions
+
+## Regular expressions
+
+Regular Expressions (regex) are a language or syntax to search in texts.
+Regex are used by most search engines in one form or another and are part of almost any programming language.
+
+You could use regex to e.g.:
+
+- Count the occurence of certain persons/organization etc. in text
+- Calculate the sums of fund discussed in legislation
+- Chose your texts based on regexes
+
+In textpreparation, regex are used to remove certain unwanted parts of text.
+
+
+
+## Next Session
+
+- Regular expressions
+- Dictionary-based content analysis
