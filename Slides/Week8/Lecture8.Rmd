@@ -18,9 +18,10 @@ knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, w
 
 ## Today's outline
 
-- Constructing a document-feature matrix
-- Preprocessing
-- Regular Expressions
+- Text analysis workflow
+- Creating a text corpus
+- Processing
+
 
 
 ## Basic Principles
@@ -95,9 +96,9 @@ The goal is to simplify text and reduce dimensionality of the dfm created from i
 - Once defined and extracted from the texts (the tokenization step), features may be:
 
     + removed or kept through use of predefined lists or patterns
-    + collapsed by:
-        * stemming
         * converting to lower case
+        * stemming
+
 
 
 ## Analysis of documents and features
@@ -111,9 +112,157 @@ These steps don't necessarily require the processing steps above:
 - `summary`
 
 
+## Creating a `corpus` object
+
+You can load texts from different file sources. The quanteda package can construct a `corpus` object from several input sources:
+
+1.  a character vector object  
+    ```{r}
+    myTinyCorpus <- corpus(inaugTexts[1:2], notes = "G.W.")
+    ```
+    
+2.  a `VCorpus` object from the **tm** package
+    ```{r}
+    data(crude, package = "tm")
+    myTmCorpus <- corpus(crude)
+    ```
+
+3.  a `corpusSource` object, created by the `readtext()` function from the **readtext** package (most likely scenario). Currently, you have to download the package from Github:
+
+```{r, eval = F}
+devtools::install_github("kbenoit/readtext") 
+```
+
+
+## Using `readtext()` to import texts
+
+In the simplest case, we would like to load a set of texts in plain text files from a single directory. To do this, we use the `readtext` command, and use the 'glob' wildcard operator * to indicate that we want to load multiple files:
+  
+```{r}
+library(readtext)
+myCorpus <- corpus(readtext("data/inaugural/*"))
+```
+
+## Using `readtext()` to import texts (II)
+
+Often, we have metadata encoded in the names of the files. For example, the inaugural addresses contain the year and the president's name in the name of the file. With the `docvarsfrom` argument, we can instruct the `readtext` command to consider these elements as document variables.
+
+```{r}
+mytf <- readtext("data/inaugural/*", docvarsfrom="filenames",
+                 dvsep="-",
+                 docvarnames=c("Year", "President"))
+inaugCorpus <- corpus(mytf)
+```
+
+## Using `readtext()` to import texts (III)
+
+If the texts and document variables are stored separately, we can easily add document variables to the corpus, as long as the data frame containing them is of the same length as the texts:
+
+```{r}
+SOTUdocvars <- read.csv("data/SOTU_metadata.csv",
+                        stringsAsFactors = F)
+SOTUdocvars$Date <- as.Date(SOTUdocvars$Date, "%B %d, %Y")
+SOTUdocvars$delivery <- as.factor(SOTUdocvars$delivery)
+SOTUdocvars$type <- as.factor(SOTUdocvars$type)
+SOTUdocvars$party <- as.factor(SOTUdocvars$party)
+SOTUdocvars$nwords <- NULL
+
+sotuCorpus <- corpus(readtext(file='data/sotu/*.txt',
+                              encoding = "UTF-8-BOM"))
+docvars(sotuCorpus) <- SOTUdocvars
+```
+
+
+## Exploring a corpus
+
+The quanteda packages comes with a built-in set of inaugural addresses from US Presidents. The `summary` command will output the name of each text along with the number of types, tokens and sentences contained in the text.
+
+```{R, echo = T}
+library(quanteda)
+summary(data_corpus_inaugural[1:3])
+oneText <- data_corpus_inaugural[1]
+nchar(oneText)
+```
+
+
+## Tokenization
+
+To tokenize a text is to split it into units, most commonly words, which can be counted and to form the basis of a quantitative analysis. The quanteda function `tokenize` can be used on a character vector, a vector of character vectors, or a corpus.
+
+```{r}
+tokens <- tokenize("Do not use semicolons. They are 
+transvestite hermaphrodites representing
+absolutely nothing. All they do is show
+you've been to college.")
+vec <- c(one = 'This is text 1.',
+two = 'This is the 2nd text.')
+```
+
+```{r, eval = F}
+tokenize(vec)
+```
+
+
+## Tokenization (II)
+
+The `tokenize` function has a number useful parameters. To remove punctuation, set the `removePunct` argument to be TRUE. We can combine this with the `removeNumbers` function to also remove numbers.
+
+```{r}
+tokenize(vec, removePunct = T, removeNumbers = T)
+```
+
+Tokenization in quanteda is very *conservative*: by default, it only removes separator characters. Using this function with the inaugural addresses we can set the `what` parameter to tokenize by sentences.
+
+```{r}
+inaugTokens <- tokenize(inaugTexts, what = "sentence")
+```
+
+
+## Conversion to lower case 
+
+`toLower` and `toUpper` from the quanteda package are methods to change the case of character vectors. Both methods are defined for many classes of quanteda objects.
+
+```{r}
+methods(toLower)
+s1 <- 'NASA sent a rocket into space.'
+
+quanteda::toLower(s1)
+
+quanteda::toUpper(s1)
+```
+
+
+## Conversion to lower case (II)
+
+`toLower` includes options designed to preserve acronyms:
+
+```{r}
+char_tolower(s1, keep_acronyms = TRUE)
+```
+
+`toLower` is based on stringi, and is therefore nicely Unicode compliant.
+```{r, eval = F}
+# Russian
+head(char_tolower(stopwords("russian")), 20)
+
+# Arabic
+head(char_tolower(stopwords("arabic")), 20)
+```
+
+**Note**: `dfm` converts to lower case by default, but this can be turned off using the `toLower = FALSE` argument.
+
+## Creating a dfm
+
+Once each text has been split into words, we can use the `dfm` function to create a matrix of counts of the occurrences of each word in each document. `dfm()` works on a variety of object types, including character vectors, corpus objects, and tokenized text objects.  
+
+```{r}
+inaugDfm <- dfm(inaugTokens)
+```
+
+
 ## Analyzing a dfm
 
-2. From a dfm -- after `dfm` on the processed document and features.
+Methods for analyzing a dfm:
 
 ```{r, eval=FALSE}
 dfm                           print
@@ -128,59 +277,60 @@ plot                          settings
 show
 ```
 
-## Creating and exploring a corpus
 
-The quanteda packages comes with a built-in set of inaugural addresses from US Presidents. The `summary` command will output the name of each text along with the number of types, tokens and sentences contained in the text.
+## Removing and selecting features: stopwords
 
-```{R, echo = T}
-library(quanteda)
-summary(data_corpus_inaugural[1:3])
-oneText <- data_corpus_inaugural[1]
-nchar(oneText)
-```
+We often want to delete stopwords, articles, prepositions, etc. to limit our analysis to words that carry actual meaning. For this, we can use the `remove` parameter.
 
-## Tokenization
-
-To tokenize a text is to split it into units, most commonly words, which can be counted and to form the basis of a quantitative analysis. The quanteda function `tokenize` can be used on a character vector, a vector of character vectors, or a corpus.
 
 ```{r}
-tokens <- tokenize("Do not use semicolons. They are 
-                   transvestite hermaphrodites representing
-                   absolutely nothing. All they do is show
-                   you've been to college.")
-vec <- c(one = 'This is text one',
-         two = 'This is the second text')
-```
+testText <- 'The quick brown fox named Seamus jumps over
+the lazy dog also named Seamus, 
+with the newspaper in his mouth.'
 
-```{r, eval = F}
-tokenize(vec)
-```
-
-## Tokenization (II)
-
-The `tokenize` function has a number useful parameters. To remove punctuation, set the `removePunct` argument to be TRUE. We can combine this with the `toLower` function to get a cleaned and tokenized version of our text.
-
-```{r}
-tokenize(toLower(vec), removePunct = T)
-```
-
-Using this function with the inaugural addresses:
-
-```{r}
-inaugTokens <- tokenize(toLower(inaugTexts))
+testCorpus <- corpus(testText)
+featnames(dfm(testCorpus, 
+remove = stopwords("english")))
 ```
 
 
-## Creating a dfm
-
-Once each text has been split into words, we can use the `dfm` function to create a matrix of counts of the occurrences of each word in each document. `dfm()` works on a variety of object types, including character vectors, corpus objects, and tokenized text objects.  
+## Removing and selecting features: frequent words
 
 ```{r}
 library(dplyr)
+# keep only words occuring <=10 times and
+# in at most 3/4 of the documents
 inaugDfm <- dfm(inaugTokens) %>% 
-    trim(min_docfreq = 5, min_count = 10) %>% 
-        weight(type = 'tfidf')
+dfm_trim(max_count = 10, max_docfreq = 0.75)
 ```
+
+
+## Removing and selecting features: other
+
+```{r}
+# keep only words ending in s
+dfm(testCorpus, select = "*s", verbose = FALSE)
+
+# # keep only hashtags
+testTweets <- "My homie @justinbieber #justinbieber
+shopping in #LA yesterday #beliebers"
+dfm(testTweets, select = "#*", removeTwitter = FALSE)
+```
+
+
+## Stemming
+
+Stemming relies on the `SnowballC` package's implementation of the Porter stemmer, and is available for the following languages:
+
+```{r}
+SnowballC::getStemLanguages()
+```
+
+It's not perfect:
+  ```{r}
+char_wordstem(c("win", "winning", "wins", "won", "winner"))
+```
+but it's fast.
 
 
 ## Extract corpus objects
@@ -189,7 +339,7 @@ To extract texts from a quanteda corpus object we can use the `texts` function.
 
 ```{r}
 mytexts <- texts(subset(inaugCorpus,
-                        President == "Washington"))
+President == "Washington"))
 ```
 
 
@@ -203,13 +353,14 @@ recentCorpus <- corpus(inaugTexts[53:56], docvars = dv)
 summary(head(recentCorpus))
 ```
 
+
 ## Combining features
 
 We can use this metadata to combine features across documents when creating a dfm:
 
 ```{r, fig.width=8, fig.height=8, eval = F}
 partyDfm <- dfm(recentCorpus, groups = 'Party',
-                ignoredFeatures = (stopwords('english')))
+ignoredFeatures = (stopwords('english')))
 plot(partyDfm, comparison = TRUE)
 ```
 
@@ -230,11 +381,7 @@ s2 <- c('This is', 'my example text.', 'So imaginative.')
 nchar(s2)
 ```
 
-## Task 1
-
-Which were the longest and shortest inaugural addresses speeches?
-
-## Task 1: Solution
+## Investigating character vectors example
 
 Which were the longest and shortest inaugural addresses speeches?
 
@@ -289,24 +436,12 @@ paste(years[1:3], pres[1:3], collapse='-')
 ```
 
 
-## Lower case
-
-`toLower` and `toUpper` from the quanteda package change the case of character vectors.
-```{r}
-s1 <- 'NASA sent a rocket into space.'
-
-quanteda::toLower(s1)
-
-quanteda::toUpper(s1)
-```
-
-
 ## Comparing character vectors
 
 Character vectors can be compared using the `==`  and `%in%` operators:
 
 ```{r}
-tolower(s1) == toupper(s1)
+char_tolower(s1) == char_toupper(s1)
 'apples'=='oranges'
 'pears' == 'pears'
 
@@ -365,3 +500,7 @@ str_trim("  String with trailing and leading white space\t")
 ```
 
 
+## Next Session
+
+- Regular expressions
+- Dictionary-based content analysis
