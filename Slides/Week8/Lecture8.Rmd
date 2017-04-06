@@ -118,7 +118,8 @@ You can load texts from different file sources. The quanteda package can constru
 
 1.  a character vector object  
 ```{r}
-    myTinyCorpus <- corpus(inaugTexts[1:2], notes = "G.W.")
+    library(quanteda)
+    myTinyCorpus <- corpus(inaugTexts[1:2], metacorpus = list(notes="G.W."))
 ```
     
 2.  a `VCorpus` object from the **tm** package
@@ -178,7 +179,6 @@ docvars(sotuCorpus) <- SOTUdocvars
 The quanteda packages comes with a built-in set of inaugural addresses from US Presidents. The `summary` command will output the name of each text along with the number of types, tokens and sentences contained in the text.
 
 ```{R, echo = T}
-library(quanteda)
 summary(data_corpus_inaugural[1:3])
 oneText <- data_corpus_inaugural[1]
 nchar(oneText)

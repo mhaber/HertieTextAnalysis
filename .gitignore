@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+Slides/*/Lecture*_files
+Slides/*/Lecture*_cache
