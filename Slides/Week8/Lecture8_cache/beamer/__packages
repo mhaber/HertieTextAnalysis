@@ -1,2 +1,5 @@
 base
 quanteda
+readtext
+dplyr
+stringr
