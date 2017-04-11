@@ -167,7 +167,7 @@ grep("\\.txt$", files, value = TRUE)
 
 ### Operators
 
-  * `.`: matches any single character, as shown in the first example. 
+  * `.`: matches any single character
   * `[...]`: a character list, matches any one of the characters inside the square brackets. We can also use `-` inside the brackets to specify a range of characters.   
   * `[^...]`: an inverted character list, similar to `[...]`, but matches any characters __except__ those inside the square brackets.  
   * `\`: suppress the special meaning of metacharacters in regular expression, i.e. `$ * + . ? [ ] ^ { } | ( ) \`, similar to its usage in escape sequences. Since `\` itself needs to be escaped in R, we need to escape these metacharacters with double backslash like `\\$`.   
@@ -202,7 +202,7 @@ grep("LAND", countries, value = TRUE)
 
 ## Character classes
 
-Character classes allows to -- surprise! -- specify entire classes of characters, such as numbers, letters, etc. There are two flavors of character classes, one uses `[:` and `:]` around a predefined name inside square brackets and the other uses `\` and a special character. They are sometimes interchangeable.   
+Character classes allow to specify entire classes of characters, such as numbers, letters, etc. There are two flavors of character classes, one uses `[:` and `:]` around a predefined name inside square brackets and the other uses `\` and a special character. They are sometimes interchangeable.   
 
   * `[:digit:]` or `\d`: digits, 0 1 2 3 4 5 6 7 8 9, equivalent to `[0-9]`.  
   * `\D`: non-digits, equivalent to `[^0-9]`.  
@@ -236,6 +236,8 @@ There are different [syntax standards](http://en.wikipedia.org/wiki/Regular_expr
   
 You can easily switch between by specifying `perl = FALSE/TRUE` in `base` R functions, such as `grep()` and `sub()`. For functions in the `stringr` package, wrap the pattern with `perl()`. The syntax between these two standards are a bit different sometimes, see an example [here](http://www.inside-r.org/packages/cran/stringr/docs/perl). If you had previous experience with Python or Java, you are probably more familiar with the Perl-like mode. But for this tutorial, we will only use R's default POSIX standard.  
 
+## General modes for patterns (II)
+
 There's one last type of regular expression -- "fixed", meaning that the pattern should be taken literally. Specify this via `fixed = TRUE` (base R functions) or wrapping with `fixed()` (`stringr` functions). For example, `"A.b"` as a regular expression will match a string with "A" followed by any single character followed by "b", but as a fixed pattern, it will only match a literal "A.b".  
 
 ```{r fixed}
@@ -265,75 +267,6 @@ Find continents in Gapminder with letter `o` in it.
 grep("o", levels(gDat$continent), ignore.case = TRUE, value = TRUE)
 ```
 
-## Examples
-
-As an example, let's try to integrate everything together, and find all course materials on `dplyr` and extract the topics we have covered. These files all follow our naming strategy: `block` followed by 3 digits, then `_`, then topic. As you can see from the [topic index](http://stat545-ubc.github.io/topics.html), we had two blocks on `dplyr`: the [intro](http://stat545-ubc.github.io/block009_dplyr-intro.html), and [verbs for a single dataset](http://stat545-ubc.github.io/block010_dplyr-end-single-table.html). We'll try to extract the `.rmd` filenames for these blocks. To make the task a bit harder, I also put a few fake files inside the repository that don't quite match our naming strategy!    
-
-We know that the filename should have `block` and `dplyr` in it, and is a Rmd file, so what if we just put these three parts together? 
-
-```{r example_1}
-pattern <- "block.*dplyr.*rmd"
-grep(pattern, files, value = TRUE)
-```
-
-Apart from the two files we wanted, we also got three fake ones: `r paste0(list.files(pattern = "fake"), collapse = ", ")`. Looks like our pattern is not stringent enough. The first fake file does not have 3 digits after `block`, second one does not start with `block`, and last one has `.txt` after `rmd`. So let's try to fix that: 
-
-```{r example_2}
-pattern <- "^block\\d{3}_.*dplyr.*rmd$"
-(dplyr_file <- grep(pattern, files, value = TRUE))
-```
-
-Now we have the two file names stored in `dplyr_file`, let's try to extract the topics out. 
-
-One way to do that is to use a substitution function like `sub()`, `gsub()`, or `str_sub()` to replace anything before and after the topic with empty strings: 
-
-```{r example_3}
-(dplyr_topic <- gsub("^block\\d{3}_.*dplyr-", "", dplyr_file))
-(dplyr_topic <- gsub("\\.rmd", "", dplyr_topic))
-```
-
-Alternatively, instead of using `grep()` + `gsub()`, we can use `str_match()`. As mentioned above, this function will give specific matches for patterns enclosed with `()` operator. We just need to reconstruct our regular expression to specify the topic part:    
-
-```{r example_4}
-pattern <- "^block\\d{3}_.*dplyr-(.*)\\.rmd$"
-(na.omit(str_match(files, pattern)))
-```
-
-The second column of the result data frame gives the topic we needed.  
-
-### Some more advanced string functions     
-
-There are some more advanced string functions that are somewhat related to regular expression, like splitting a string, get a subset of a string, pasting strings together etc. These functions are very useful for data cleaning, and we will get into more details about them later this week. Here is a short introduction with above example.   
-
-From above example, we got two topics on `dplyr`: `r cat(dplyr_topic, sep = ",")`. We can use `strsplit()` function to split the second one, `r cat(dplyr_topic[2])`, into words. The second argument `split` is a regular expression used for splitting, and the function will return a list. We can use `unlist()` function to convert the list into a character vector. Or an alternative function `str_split_fixed()` will return a data frame.   
-
-<!-- *JB: what about something based on `strsplit(dplyr_file, "_")`?* -->
-
-```{r strsplit}
-(topic_split <- unlist(strsplit(dplyr_topic[2], "-")))
-(topic_split <- str_split_fixed(dplyr_topic[2], "-", 3)[1, ])
-```
-
-We can also use `paste()` or `paste0()` functions to put them back together. `paste0()` function is equivalent to `paste()` with `sep = ""`. We can use `collapse = "-"` argument to concatenate a character vector into a string:        
-
-```{r paste}
-paste(topic_split, collapse = "-")
-```
-
-Another useful function is `substr()`. It can be used to extract a part of a string with start and end positions. For example, to extract the first three letters in `dplyr_topic`:     
-
-```{r substr}
-substr(dplyr_topic, 1, 3)
-```
-
-### Exercise
-Get all markdown documents on peer review and extract the specific topics.        
-
-> Hint: file names should start with `peer-review`.   
-
-```{r ex_final, echo = FALSE}
-cat(na.omit(str_match(files, "peer-review.*_(.*)\\.md")[, 2]), sep = ",  ")
-```
 
 ## Regular expression vs shell globbing
 
@@ -345,8 +278,6 @@ The term globbing in shell or Unix-like environment refers to pattern matching b
   * `[...]`: same as regular expression.  
   * `[!...]`: same as `[^...]` in regular expression.   
 
-<!-- *JB: I know that I've been burned by confusing regular expressions and globbing. Can you recall where this can hurt you? I can't right now! But we included this to alert them to something and I wish we could clarify what to watch out for.*  -->
-
 ## Resources
 
   * Regular expression in R [official document](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html).  
@@ -357,19 +288,6 @@ The term globbing in shell or Unix-like environment refers to pattern matching b
   + [regexpal](http://regexpal.com/)    
   + [RegExr](http://www.regexr.com/)   
 
-```{r delete_fake, echo=F, results='hide'}
-file.remove(c("block0_dplyr-fake.rmd", "block000_dplyr-fake.rmd.txt", "xblock000_dplyr-fake.rmd"))
-```
-
-## Rational for dictionaries
-
-- Rather than count words that occur, pre-define words associated with specific meanings
-- Two components:
-
-    + **key** the label for the equivalence class for the concept or canonical term
-    + **values** (multiple) terms or patterns that are declared equivalent occurences of the key class
-
-- Frequently involves lemmatization: transformation of all in ected word forms to their "dictionary look-up form" -- more powerful than stemming
 
 
 ## Dictionary approaches
@@ -383,6 +301,17 @@ Dictionaries help classifying texts to categories or determine their content of 
 
     + Dictionaries require knowing the semantic form of the concept
     + i.e. one would need a complete dictionary of left or right statements
+
+
+## Rational for dictionaries
+
+- Rather than count words that occur, pre-define words associated with specific meanings
+- Two components:
+
+    + **key** the label for the equivalence class for the concept or canonical term
+    + **values** (multiple) terms or patterns that are declared equivalent occurences of the key class
+
+- Frequently involves lemmatization: transformation of all in ected word forms to their "dictionary look-up form" -- more powerful than stemming
 
 
 ## Creating dictionaries
