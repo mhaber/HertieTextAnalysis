@@ -475,16 +475,24 @@ knitr::include_graphics("img/9-1.png")
 
 ## Examples 3: Happiness in song lyrics
 
-**Dodds/Danforth 2009**
+Valence time series for song titles broken down by representative genres (Dodds & Danforth 2009)
 
 ```{r, out.width = "320px", echo = F}
 knitr::include_graphics("img/9-2.png")
 ```  
 
+## Examples 4: Happiness in blogs
+
+Time series of average monthly valence for blog sentences starting with "I feel…" (Dodds & Danforth 2009)
+
+```{r, out.width = "320px", echo = F}
+knitr::include_graphics("img/9-3.png")
+```  
+
 ## Advantage: Multi-lingual
 
 ```{r, out.width = "220px", echo = F}
-knitr::include_graphics("img/9-3.png")
+knitr::include_graphics("img/9-4.png")
 ```  
 
 ## Disdvantage: Highly specific to context
