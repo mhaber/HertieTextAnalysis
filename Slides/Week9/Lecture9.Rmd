@@ -45,7 +45,7 @@ library(quanteda) # needs devtools & Matrix package
 library(tm)
 # you have to install the next package from github
 # if you have rtools and devtools installed 
-# use devtools::install_github(readtext)
+# use devtools::install_github("kbenoit/readtext")
 library(readtext) 
 ```
 
