@@ -13,27 +13,27 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, warning = F)
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F,
+                      warning = F, mysize=T, size='\\footnotesize')
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
 ```
+
 
 ## Today's outline
 
-- Repetition Quantitative text analysis concepts
+- Recap Quanteda
 - Regular Expressions
 - Dictionary Approaches
 
-    + Deriving a dictionary, "Wordscores version 0.1"
-    + External dictionaries
-    + Application
-
-
-- Text analysis workflow
-- Creating a text corpus
-- Preprocessing
-- Regular Expressions
-
 
 ## Set up to work along today's slides
+**Working directory**
+```{r}
+wdir <- getwd()
+```
 
 **Packages**
 ```{r}
@@ -41,22 +41,148 @@ knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, w
 # install.package()
 library(stringr)
 library(dplyr)
+library(quanteda) # needs devtools & Matrix package
+library(tm)
+# you have to install the next package from github
+# if you have rtools and devtools installed 
+# use devtools::install_github(readtext)
+library(readtext) 
 ```
+
+## Set up to work along today's slides (II)
 
 **Data**
 ```{r}
-gDat <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv")
+# Gapminder dataset
+gDat <- read.csv(paste0("https://raw.githubusercontent.com/",
+                        "plotly/datasets/master/",
+                        "gapminderDataFiveYear.csv"))
+# UK manifesto texts on immigration
+temp <- tempfile(fileext = ".zip")
+download.file(paste0("https://github.com/kbenoit/ME414/",
+                     "raw/master/day8/UKimmigTexts.zip"),
+              temp)
+unzip(zipfile= temp, exdir = wdir)
+unlink(temp)
 ```
 
-**Fake Data**
-```{r create_fake, echo=F, results='hide'}
-file.create(c("block0_dplyr-fake.rmd", "block000_dplyr-fake.rmd.txt", "xblock000_dplyr-fake.rmd"))
+
+## Exploring quanteda functions
+
+Look at the Quick Start vignette, and browse the manual for quanteda.  You can use
+`example()` function for any function in the package, to run the examples and see how the function works.
+
+## Making a corpus from a vector
+
+`inaugTexts` is the UTF-8 encoded set of 57 presidential inaugural
+addresses.Try using `corpus()` on this set of texts to create a corpus. Once you have constructed this corpus, use the `summary()` method to see a brief description of the corpus. The names of the character vector `inaugTexts` should have become the document names.
+
+```{r, eval = F}
+data_corpus_inaugural <- corpus(inaugTexts)
+summary(data_corpus_inaugural)
 ```
+        
+      
+## Making a corpus a directory of text files
+   
+The `readtext()` function can read (almost) any set of files into an object that you can then call the `corpus()` function on, to create a corpus. For example, to read the UK manifesto files into a corpus use:
+```{r}
+# if you have readtext installed
+mycorpus <- corpus(readtext(paste0(wdir, "/*.txt")))
+
+# alternatively use VCorpus from tm
+myTmCorpus <- VCorpus(DirSource(wdir, pattern = "\\.txt" ))
+mycorpusTM <- corpus(myTmCorpus)
+```
+
+## Explore some phrases in the text
+The `kwic` (for "key-words-in-context") function is easily usable and configurable to explore texts in a descriptive way.
+      
+```{r}
+kwic(data_corpus_inaugural, "terror", 3)
+```
+
+Try substituting your own search terms, or working with your own corpus.
+
+## Create a document-feature matrix
+
+Create a document-feature matrix, using `dfm`
+   
+```{r}
+mydfm <- dfm(data_corpus_inaugural, 
+             remove = stopwords("english"))
+
+topfeatures(mydfm, 10)
+```
+   
+Experiment with different `dfm` options, such as `stem=TRUE`.  The function `trim()` allows to reduce the size of the dfm following its construction.
+ 
+## Grouping on a variable
+
+If you want to aggregate all speeches by presidential name, you can execute
+    
+```{r}
+mydfm <- dfm(data_corpus_inaugural, groups = "President")
+docnames(mydfm)[1:10]
+```
+
+> Note: that this groups Theodore and Franklin D. Roosevelt together -- to separate them we
+would have needed to add a firstname variable using `docvars()` and grouped on that as well.
+
+## Subset a corpus
+There is a `corpus_subset` method defined for a corpus, which works just like R's normal `subset()` command.  For instance if you want a wordcloud of just Obama's two inagural addresses, you would need to subset the corpus first:
+   
+```{r}
+obamadfm <- dfm(corpus_subset(data_corpus_inaugural, 
+                       President=="Obama"))
+```
+
+## Subset a corpus (II)
+
+```{r out.width = "300px"}
+plot(obamadfm)
+```
+
+## Task 1
+
+Create a wordcloud of just Obama's two inagural addresses with the stopwords.
+
+## Task 1 solution
+
+Create a wordcloud of just Obama's two inagural addresses with the stopwords.
+
+```{r }
+obamadfm <- dfm(corpus_subset(data_corpus_inaugural,
+                              President=="Obama"), 
+                remove = stopwords("english"))
+```
+
+
+## Task 1 solution (II)
+
+Create a wordcloud of just Obama's two inagural addresses with the stopwords.
+
+```{r out.width = "300px"}
+plot(obamadfm)
+```
+
+## Descriptive statistics
+Quanteda provides a number of functions to create descriptive summaries. For example,
+you can examine the most frequent word features using `topfeatures()` and use `nsyllable`
+to count the number of syllables.
+
+```{r}
+ibdfm <- dfm(data_corpus_irishbudget2010)
+topfeatures(ibdfm)
+nsyllable(texts(data_corpus_irishbudget2010))
+```
+
+
 
 ## Regular expressions
 
 Regular Expressions (regex) are a language or syntax to search in texts.
-Regex are used by most search engines in one form or another and are part of almost any programming language. It is truly the heart and soul for string operations. In R, many string functions in `base` R as well as in `stringr` package use regular expressions, even Rstudio's search and replace allows regular expression.
+Regex are used by most search engines in one form or another and are part of almost any programming language. In R, many string functions in `base` R as well as in `stringr` package use regular expressions, even Rstudio's search and replace allows regular expression.
 
 You could use regex to e.g.:
 
@@ -68,17 +194,22 @@ In textpreparation, regex are used to remove certain unwanted parts of text.
 
 ## Regular expression syntax 
 
-Regular expressions typically specify characters to seek out, possibly with information about repeats and location within the string. This is accomplished with the help of metacharacters that have specific meaning: `$ * + . ? [ ] ^ { } | ( ) \`. 
+Regular expressions typically specify characters to seek out, possibly with information about repeats and location within the string. This is accomplished with the help of metacharacters that have specific meaning: 
+
+- `$ * + . ? [ ] ^ { } | ( ) \`. 
 
 
 ## String functions related to regular expression
-Regular expression is a pattern that describes a specific set of strings with a common structure. It is heavily used for string matching / replacing in all programming languages, although specific syntax may differ a bit. It is truly the heart and soul for string operations. In R, many string functions in `base` R as well as in `stringr` package use regular expressions, even Rstudio's search and replace allows regular expression, we will go into more details about these functions later this week:       
 
-  * identify match to a pattern: `grep(..., value = FALSE)`, `grepl()`, `stringr::str_detect()`
-  * extract match to a pattern: `grep(..., value = TRUE)`, `stringr::str_extract()`, `stringr::str_extract_all()`     
-  * locate pattern within a string, i.e. give the start position of matched patterns. `regexpr()`, `gregexpr()`, `stringr::str_locate()`, `string::str_locate_all()`     
-  * replace a pattern: `sub()`, `gsub()`, `stringr::str_replace()`, `stringr::str_replace_all()`     
-  * split a string using a pattern: `strsplit()`, `stringr::str_split()`   
+- `grep(..., value = FALSE)`, `grepl()`, `stringr::str_detect()` to identify match to a pattern
+  
+- `grep(..., value = TRUE)`, `stringr::str_extract()`, `stringr::str_extract_all()` to extract match to a pattern     
+  
+- `regexpr()`, `gregexpr()`, `stringr::str_locate()`, `string::str_locate_all()` to locate pattern within a string     
+  
+- `sub()`, `gsub()`, `stringr::str_replace()`, `stringr::str_replace_all()` to replace a pattern     
+  
+- `strsplit()`, `stringr::str_split()` to split a string using a pattern 
   
 
 ## Escape sequences
@@ -91,7 +222,7 @@ grep('\'', levels(gDat$country), value = TRUE)
 
 ## Escape sequences (II)
 
-There are other characters in R that require escaping, and this rule applies to all string functions in R, including regular expressions. See [here](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Quotes.html) for a complete list of R esacpe sequences.        
+There are other characters in R that require escaping, and this rule applies to all string functions in R, including regular expressions. See [_here_](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Quotes.html) for a complete list of R esacpe sequences.        
 
   * `\'`: single quote. You don't need to escape single quote inside a double-quoted string, so we can also use `"'"` in the previous example.        
   * `\"`: double quote. Similarly, double quotes can be used inside a single-quoted string, i.e. `'"'`.          
@@ -99,16 +230,10 @@ There are other characters in R that require escaping, and this rule applies to 
   * `\r`: carriage return.   
   * `\t`: tab character.   
 
-> Note: `cat()` and `print()` to handle escape sequences differently, if you want to print a string out with these sequences interpreted, use `cat()`.      
 
-```{r cat_print}
-print("a\nb")
-cat("a\nb")
-```
+## Quantifiers
 
-### Quantifiers
-
-Quantifiers specify how many repetitions of the pattern.   
+Quantifiers specify the number of repetitions of the pattern.   
 
   * `*`: matches at least 0 times.   
   * `+`: matches at least 1 times.     
@@ -117,8 +242,11 @@ Quantifiers specify how many repetitions of the pattern.
   * `{n,}`: matches at least n times.    
   * `{n,m}`: matches between n and m times.     
 
+
+## Quantifiers (II)
+
 ```{r quantifiers}
-(strings <- c("a", "ab", "acb", "accb", "acccb", "accccb"))
+strings <- c("a", "ab", "acb", "accb", "acccb", "accccb")
 grep("ac*b", strings, value = TRUE)
 grep("ac+b", strings, value = TRUE)
 grep("ac?b", strings, value = TRUE)
@@ -127,17 +255,17 @@ grep("ac{2,}b", strings, value = TRUE)
 grep("ac{2,3}b", strings, value = TRUE)
 ```
 
-## Task 1  
+## Task 2  
 Find all countries with `ee` in the Gapminder dataset using quantifiers.   
 
-## Task 1 solution  
+## Task 2 solution  
 Find all countries with `ee` in the Gapminder dataset using quantifiers.   
 
 ```{r ex_quant, echo = FALSE}
 grep("e{2}", levels(gDat$country), value = TRUE)
 ```
 
-### Position of pattern within the string 
+## Position of pattern within the string 
 
   * `^`: matches the start of the string.   
   * `$`: matches the end of the string.   
@@ -153,29 +281,31 @@ grep("\\bab", strings, value = TRUE)
 ```
 
 
-## Task 2 
-Find all `.txt` files in the "Slides/Week9" folder   
+## Task 3 
+Find all `.txt` files in your working directory   
 
 
-## Task 2 solution
-Find all `.txt` files in the "Slides/Week9" folder   
+## Task 3 solution
+Find all `.txt` files in your working directory   
 
-```{r ex_pos, echo = FALSE}
-files <- list.files("Slides/Week9")
-grep("\\.txt$", files, value = TRUE)
+```{r }
+files <- list.files(wdir)
+grep("\\.txt", files, value = TRUE)
 ```
 
-### Operators
+## Operators
 
   * `.`: matches any single character
   * `[...]`: a character list, matches any one of the characters inside the square brackets. We can also use `-` inside the brackets to specify a range of characters.   
   * `[^...]`: an inverted character list, similar to `[...]`, but matches any characters __except__ those inside the square brackets.  
   * `\`: suppress the special meaning of metacharacters in regular expression, i.e. `$ * + . ? [ ] ^ { } | ( ) \`, similar to its usage in escape sequences. Since `\` itself needs to be escaped in R, we need to escape these metacharacters with double backslash like `\\$`.   
   * `|`: an "or" operator, matches patterns on either side of the `|`.  
-  * `(...)`: grouping in regular expressions. This allows you to retrieve the bits that matched various parts of your regular expression so you can alter them or use them for building up a new string. Each group can than be refer using `\\N`, with N being the No. of `(...)` used. This is called __backreference__.    
+  * `(...)`: grouping in regular expressions which allows to retrieve the bits that matched various parts of your regular expression. Each group can than be refer using `\\N`, with N being the No. of `(...)` used. This is called __backreference__.    
+
+## Operators (II)
 
 ```{r operators}
-(strings <- c("^ab", "ab", "abc", "abd", "abe", "ab 12"))
+strings <- c("^ab", "ab", "abc", "abd", "abe", "ab 12")
 grep("ab.", strings, value = TRUE)
 grep("ab[c-e]", strings, value = TRUE)
 grep("ab[^c]", strings, value = TRUE)
@@ -185,12 +315,12 @@ grep("abc|abd", strings, value = TRUE)
 gsub("(ab) 12", "\\1 34", strings)
 ```
 
-## Task 3
+## Task 4
 
 Find countries in the Gapminder data with letter `i` or `t`, and ends with `land`, and replace `land` with `LAND` using backreference.  
 
 
-## Task 3 solution
+## Task 4 solution
 
 Find countries in the Gapminder data with letter `i` or `t`, and ends with `land`, and replace `land` with `LAND` using backreference.  
 
@@ -204,28 +334,36 @@ grep("LAND", countries, value = TRUE)
 
 Character classes allow to specify entire classes of characters, such as numbers, letters, etc. There are two flavors of character classes, one uses `[:` and `:]` around a predefined name inside square brackets and the other uses `\` and a special character. They are sometimes interchangeable.   
 
-  * `[:digit:]` or `\d`: digits, 0 1 2 3 4 5 6 7 8 9, equivalent to `[0-9]`.  
-  * `\D`: non-digits, equivalent to `[^0-9]`.  
-  * `[:lower:]`: lower-case letters, equivalent to `[a-z]`.  
-  * `[:upper:]`: upper-case letters, equivalent to `[A-Z]`.  
-  * `[:alpha:]`: alphabetic characters, equivalent to `[[:lower:][:upper:]]` or `[A-z]`.  
-  * `[:alnum:]`: alphanumeric characters, equivalent to `[[:alpha:][:digit:]]` or `[A-z0-9]`.   
-  * `\w`: word characters, equivalent to `[[:alnum:]_]` or `[A-z0-9_]`.  
-  * `\W`: not word, equivalent to `[^A-z0-9_]`.  
-  * `[:xdigit:]`: hexadecimal digits (base 16), 0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f, equivalent to `[0-9A-Fa-f]`.
-  * `[:blank:]`: blank characters, i.e. space and tab.  
-  * `[:space:]`: space characters: tab, newline, vertical tab, form feed, carriage return, space.
-  * `\s`: space, ` `.  
-  * `\S`: not space.  
-  * `[:punct:]`: punctuation characters, ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
-  * `[:graph:]`: graphical (human readable) characters: equivalent to `[[:alnum:][:punct:]]`.
-  * `[:print:]`: printable characters, equivalent to `[[:alnum:][:punct:]\\s]`.
-  * `[:cntrl:]`: control characters, like `\n` or `\r`, `[\x00-\x1F\x7F]`.  
+  - `[:digit:]` or `\d`: digits, 0 1 2 3 4 5 6 7 8 9, equivalent to `[0-9]`.  
+  - `\D`: non-digits, equivalent to `[^0-9]`.  
+  - `[:lower:]`: lower-case letters, equivalent to `[a-z]`.  
+  - `[:upper:]`: upper-case letters, equivalent to `[A-Z]`.  
+  - `[:alpha:]`: alphabetic characters, equivalent to `[[:lower:][:upper:]]` or `[A-z]`.  
+  - `[:alnum:]`: alphanumeric characters, equivalent to `[[:alpha:][:digit:]]` or `[A-z0-9]`.
+
+  
+## Character classes (II)
+
+  - `\w`: word characters, equivalent to `[[:alnum:]_]` or `[A-z0-9_]`.  
+  - `\W`: not word, equivalent to `[^A-z0-9_]`.  
+  - `[:xdigit:]`: hexadecimal digits (base 16), 0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f, equivalent to `[0-9A-Fa-f]`.
+  - `[:blank:]`: blank characters, i.e. space and tab.  
+  - `[:space:]`: space characters: tab, newline, vertical tab, form feed, carriage return, space.
+  - `\s`: space, ` `.  
+  - `\S`: not space.  
+  - `[:punct:]`: punctuation characters, ! " # $ % & ' ( ) - + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
+  
+## Character classes (III)
+  
+  - `[:graph:]`: graphical (human readable) characters: equivalent to `[[:alnum:][:punct:]]`.
+  - `[:print:]`: printable characters, equivalent to `[[:alnum:][:punct:]\\s]`.
+  - `[:cntrl:]`: control characters, like `\n` or `\r`, `[\x00-\x1F\x7F]`.  
 
 Note:       
 
-* `[:...:]` has to be used inside square brackets, e.g. `[[:digit:]]`.     
-* `\` itself is a special character that needs escape, e.g. `\\d`. Do not confuse these regular expressions with R escape sequences such as `\t`.      
+- `[:...:]` has to be used inside square brackets, e.g. `[[:digit:]]`.     
+- `\` itself is a special character that needs escape, e.g. `\\d`. Do not confuse these regular expressions with R escape sequences such as `\t`.      
+
 
 ## General modes for patterns
 
@@ -234,18 +372,20 @@ There are different [syntax standards](http://en.wikipedia.org/wiki/Regular_expr
   * POSIX extended regular expressions (default)
   * Perl-like regular expressions.
   
-You can easily switch between by specifying `perl = FALSE/TRUE` in `base` R functions, such as `grep()` and `sub()`. For functions in the `stringr` package, wrap the pattern with `perl()`. The syntax between these two standards are a bit different sometimes, see an example [here](http://www.inside-r.org/packages/cran/stringr/docs/perl). If you had previous experience with Python or Java, you are probably more familiar with the Perl-like mode. But for this tutorial, we will only use R's default POSIX standard.  
+You can easily switch between by specifying `perl = FALSE/TRUE` in `base` R functions, such as `grep()` and `sub()`. For functions in the `stringr` package, wrap the pattern with `perl()`. 
 
 ## General modes for patterns (II)
 
 There's one last type of regular expression -- "fixed", meaning that the pattern should be taken literally. Specify this via `fixed = TRUE` (base R functions) or wrapping with `fixed()` (`stringr` functions). For example, `"A.b"` as a regular expression will match a string with "A" followed by any single character followed by "b", but as a fixed pattern, it will only match a literal "A.b".  
 
 ```{r fixed}
-(strings <- c("Axbc", "A.bc"))
+strings <- c("Axbc", "A.bc")
 pattern <- "A.b"
 grep(pattern, strings, value = TRUE)
 grep(pattern, strings, value = TRUE, fixed = TRUE)
 ```
+
+## General modes for patterns (III)
 
 By default, pattern matching is case sensitive in R, but you can turn it off with `ignore.case = TRUE` (base R functions) or wrapping with `ignore.case()` (`stringr` functions). Alternatively, you can use `tolower()` and `toupper()` functions to convert everything to lower or upper case. Take the same example above: 
 
@@ -255,11 +395,11 @@ grep(pattern, strings, value = TRUE)
 grep(pattern, strings, value = TRUE, ignore.case = TRUE)
 ```
 
-## Task 4
+## Task 5
 
 Find continents in Gapminder with letter `o` in it.  
 
-## Task 4 solution
+## Task 5 solution
 
 Find continents in Gapminder with letter `o` in it.  
 
@@ -270,7 +410,7 @@ grep("o", levels(gDat$continent), ignore.case = TRUE, value = TRUE)
 
 ## Regular expression vs shell globbing
 
-The term globbing in shell or Unix-like environment refers to pattern matching based on wildcard characters. A wildcard character can be used to substitute for any other character or characters in a string. Globbing is commonly used for matching file names or paths, and has a much simpler syntax. It is somewhat similar to regular expressions, and that's why people are often confused between them. Here is a list of globbing syntax and their comparisons to regular expression:   
+The term globbing refers to pattern matching based on wildcard characters. A wildcard character can be used to substitute for any other character or characters in a string. Globbing is commonly used for matching file names or paths, and has a much simpler syntax. Below is a list of globbing syntax and their comparisons to regular expression:   
 
   * `*`: matches any number of unknown characters, same as `.*` in regular expression.  
   * `?`: matches one unknown character, same as `.` in regular expression.  
@@ -280,19 +420,20 @@ The term globbing in shell or Unix-like environment refers to pattern matching b
 
 ## Resources
 
-  * Regular expression in R [official document](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html).  
-  * Perl-like regular expression: regular expression in perl [manual](http://perldoc.perl.org/perlre.html#Regular-Expressions).   
-  * [`qdapRegex` package](http://trinkerrstuff.wordpress.com/2014/09/27/canned-regular-expressions-qdapregex-0-1-2-on-cran/): a collection of handy regular expression tools, including handling abbreviations, dates, email addresses, hash tags, phone numbers, times, emoticons, and URL etc.   
-  * Recently, there are some attemps to create human readable regular expression packages, [Regularity](https://github.com/andrewberls/regularity) in Ruby is a very successful one. Unfortunately, its implementation in R is still quite beta at this stage, not as friendly as Regularity yet. But keep an eye out, better packages may become available in the near future!    
-  * There are some online tools to help learn, build and test regular expressions. On these websites, you can simply paste your test data and write regular expression, and matches will be highlighted.   
-  + [regexpal](http://regexpal.com/)    
-  + [RegExr](http://www.regexr.com/)   
+  - Regular expression in R [official document](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html).  
+  - Perl-like regular expression: regular expression in perl [manual](http://perldoc.perl.org/perlre.html#Regular-Expressions).   
+  - [`qdapRegex` package](http://trinkerrstuff.wordpress.com/2014/09/27/canned-regular-expressions-qdapregex-0-1-2-on-cran/): a collection of handy regular expression tools, including handling abbreviations, dates, email addresses, hash tags, phone numbers, times, emoticons, and URL etc.   
+  - On these websites, you can simply paste your test data and write regular expression, and matches will be highlighted.
+  
+    + [regexpal](http://regexpal.com/)
+    + [RegExr](http://www.regexr.com/)   
 
 
 
 ## Dictionary approaches
 
-Dictionaries help classifying texts to categories or determine their content of a known concept.
+Dictionaries help classifying texts to categories or determine their content of a known concept. They are a hybrid procedure between qualitative and quantitative classification.
+Dictionary construction involves a lot of contextual interpretation and qualitative judgment.
 
 - Which text pertain to which categories?
 - Which texts contain how much of a concept?
@@ -301,6 +442,9 @@ Dictionaries help classifying texts to categories or determine their content of 
 
     + Dictionaries require knowing the semantic form of the concept
     + i.e. one would need a complete dictionary of left or right statements
+    
+- Perfect reliability because there is no human decision making
+as part of the text analysis procedure
 
 
 ## Rational for dictionaries
@@ -313,6 +457,44 @@ Dictionaries help classifying texts to categories or determine their content of 
 
 - Frequently involves lemmatization: transformation of all in ected word forms to their "dictionary look-up form" -- more powerful than stemming
 
+## Example 1: Linquistic inquiry
+
+- Craeted by Pennebaker et al: http://www.liwc.net
+- uses a dictionary to calculate the percentage of words in the text that match each of up to 82 language dimensions
+- Consists of about 4,500 words and word stems, each defining one or more word categories or subdictionaries
+- For example, the word _cried_ is part of five word categories: sadness, negative emotion, overall affect, verb, and past tense verb
+- Hierarchical: so "anger" are part of an emotion category and a negative emotion subcategory
+- You can buy it here: http://www.liwc.net/descriptiontable1.php
+
+
+## Example 2: Terrorist speech
+
+```{r, out.width = "220px", echo = F}
+knitr::include_graphics("img/9-1.png")
+```  
+
+## Examples 3: Happiness in song lyrics
+
+**Dodds/Danforth 2009**
+
+```{r, out.width = "320px", echo = F}
+knitr::include_graphics("img/9-2.png")
+```  
+
+## Advantage: Multi-lingual
+
+```{r, out.width = "220px", echo = F}
+knitr::include_graphics("img/9-3.png")
+```  
+
+## Disdvantage: Highly specific to context
+
+- Example: Loughran and McDonald used the Harvard-IV-4
+TagNeg (H4N) dictionary to classify sentiment for a corpus of 50,115 firm-year 10-K filings from 1994-2008
+- they found that almost three-fourths of the "negative" words of
+H4N were typically not negative in a financial context e.g. mine or cancer, or tax, cost, capital, board, liability, foreign, and vice
+- Problem: **polysemes** words that have multiple meanings
+- Another problem: dictionary lacked important negative financial words, such as felony, litigation, restated, misstatement, and unanticipated
 
 ## Creating dictionaries
 
@@ -352,58 +534,36 @@ Dictionaries help classifying texts to categories or determine their content of 
 
     + Replaces the creation of a dictionary as in Laver and Garry 2000
 
+## Creating a simple dictionary
 
-## Estimating Policy Positions from Political Texts
+To create a simple dictionary of parts of speech, for instance we could define a dictionary consisting of articles and conjunctions, using:
 
-**Laver & Garry**
+```{r}
+posDict <- dictionary(list(articles = c("the", "a", "and"),
+           conjunctions = c("and", "but", "or", "nor", "for", "yet", "so")))
+```
+        
+We can use this dictionary when we create a `dfm` to let this define a set of features:
 
-- Goal: Generating party positions for British and Irish manifestos
+```{r}
+posDfm <- dfm(data_corpus_inaugural, dictionary=posDict)
+posDfm[1:5,]
+```
 
-- Coding scheme similar to the CMP's
+## Task 6
+Create your own dictionary or download a dictionary of the web and use it to define a set of features for the UK manifesto texts on immigration.
 
-    + More hierachical, larger number of categories
-    + Each category has a pro-, con- and neutral variant
+## Task 6 solution
 
-## Estimating Policy Positions from Political Texts (II)
+```{r }
+ownDict <- dictionary(file = paste0("http://www.kenbenoit.net/courses/",
+                               "essex2014qta/LaverGarry.cat"),
+           format = "wordstat")
+ukDfm <- dfm(mycorpus, dictionary=ownDict)
+topfeatures(ukDfm)
+```
 
-**Training Set** 
-
-- Manifestos of Labour and Cons (UK) in 1992
-
-    + Pool of 'keywords'
-    + $N_{L} \geq 2N_{R}=>$ Dictionary element left
-    + $N_{R} \geq 2N_{L}=>$ Dictionary element right
-
-- Allocate selected words to the coding scheme's categories
-
-## Estimating Policy Positions from Political Texts (III)
-    
-- Count the occurence of the elements in the dictionary in manifestos
-
-    + Britain (1992 & 1997)
-    + Ireland (1992 & 1997)
-
-- Left-right-scaling: $\frac{R-L}{R+L}$ (see Session 7 and assignment 2)
-
-    + "Updating process"
-    + $Econ_{LR}$
-    + $Soc_{LR}$
-
-
-## Estimating Policy Positions from Political Texts (III)
-
-
-- Test-Set: Crossvalidation
-
-    + Expert Surveys
-    + CMP Coding/Revised CMP Coding
-
-```{r, out.width = "250px", echo = F}
-knitr::include_graphics("img/9-1.png")
-```  
 
 ## Next Session
 
-
-- Regular expressions
-- Dictionary-based content analysis
+- Estimating Policy Positions from Political Texts
