@@ -1,7 +1,7 @@
 ---
-title: "Quantitative Content Analysis: Lecture 9"
+title: "Quantitative Content Analysis: Lecture 10"
 author: "Matthias Haber"
-date: "12 April 2017"
+date: "19 April 2017"
 output:
   beamer_presentation:
     theme: "CambridgeUS"
@@ -13,17 +13,23 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F, warning = F)
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F,
+                      warning = F, mysize=T, size='\\footnotesize')
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
 ```
 
 ## Today's outline
 
-- Recap Quanteda
-- Regular Expressions
-- Dictionary Approaches
 
+- Dictionary Approaches
+- Wordscores
+- Final Project
 
 ## Set up to work along today's slides
+
 **Working directory**
 ```{r}
 wdir <- getwd()
@@ -31,384 +37,9 @@ wdir <- getwd()
 
 **Packages**
 ```{r}
-# if you don't have the package, install it first
-# install.package()
-library(stringr)
-library(dplyr)
 library(quanteda) # needs devtools & Matrix package
 library(tm)
-# you have to install the next package from github
-# if you have rtools and devtools installed 
-# use devtools::install_github(readtext)
-library(readtext) 
 ```
-
-## Set up to work along today's slides (II)
-
-**Data**
-```{r}
-# Gapminder dataset
-gDat <- read.csv(paste0("https://raw.githubusercontent.com/",
-                        "plotly/datasets/master/",
-                        "gapminderDataFiveYear.csv"))
-# UK manifesto texts on immigration
-temp <- tempfile(fileext = ".zip")
-download.file(paste0("https://github.com/kbenoit/ME414/",
-                     "raw/master/day8/UKimmigTexts.zip"),
-              temp)
-unzip(zipfile= temp, exdir = wdir)
-unlink(temp)
-```
-
-
-## Exploring quanteda functions
-
-Look at the Quick Start vignette, and browse the manual for quanteda.  You can use
-`example()` function for any function in the package, to run the examples and see how the function works.
-
-## Making a corpus from a vector
-
-`inaugTexts` is the UTF-8 encoded set of 57 presidential inaugural
-addresses.Try using `corpus()` on this set of texts to create a corpus. Once you have constructed this corpus, use the `summary()` method to see a brief description of the corpus. The names of the character vector `inaugTexts` should have become the document names.
-
-```{r, eval = F}
-data_corpus_inaugural <- corpus(inaugTexts)
-summary(data_corpus_inaugural)
-```
-        
-      
-## Making a corpus a directory of text files
-   
-The `readtext()` function can read (almost) any set of files into an object that you can then call the `corpus()` function on, to create a corpus. For example, to read the UK manifesto files into a corpus use:
-```{r}
-# if you have readtext installed
-mycorpus <- corpus(readtext(paste0(wdir, "/*.txt")))
-
-# alternatively use VCorpus from tm
-myTmCorpus <- VCorpus(DirSource(wdir, pattern = "\\.txt" ))
-mycorpus <- corpus(myTmCorpus)
-```
-
-## Explore some phrases in the text
-The `kwic` (for "key-words-in-context") function is easily usable and configurable to explore texts in a descriptive way.
-      
-```{r}
-kwic(data_corpus_inaugural, "terror", 3)
-```
-
-Try substituting your own search terms, or working with your own corpus.
-
-## Create a document-feature matrix
-
-Create a document-feature matrix, using `dfm`
-   
-```{r}
-mydfm <- dfm(data_corpus_inaugural, 
-             remove = stopwords("english"))
-topfeatures(mydfm, 10)
-```
-   
-Experiment with different `dfm` options, such as `stem=TRUE`.  The function `trim()` allows to reduce the size of the dfm following its construction.
- 
-## Grouping on a variable
-
-If you want to aggregate all speeches by presidential name, you can execute
-    
-```{r}
-mydfm <- dfm(data_corpus_inaugural, groups = "President")
-docnames(mydfm)[1:10]
-```
-
-> Note: that this groups Theodore and Franklin D. Roosevelt together -- to separate them we
-would have needed to add a firstname variable using `docvars()` and grouped on that as well.
-
-## Subset a corpus
-There is a `corpus_subset` method defined for a corpus, which works just like R's normal `subset()` command.  For instance if you want a wordcloud of just Obama's two inagural addresses, you would need to subset the corpus first:
-   
-```{r}
-obamadfm <- dfm(corpus_subset(data_corpus_inaugural, 
-                       President=="Obama"))
-```
-
-## Subset a corpus (II)
-
-```{r out.width = "300px"}
-plot(obamadfm)
-```
-
-## Task 1
-
-Create a wordcloud of just Obama's two inagural addresses with the stopwords.
-
-## Task 1 solution
-
-Create a wordcloud of just Obama's two inagural addresses with the stopwords.
-
-```{r }
-obamadfm <- dfm(corpus_subset(data_corpus_inaugural,
-                              President=="Obama"), 
-                remove = stopwords("english"))
-```
-
-
-## Task 1 solution (II)
-
-Create a wordcloud of just Obama's two inagural addresses with the stopwords.
-
-```{r out.width = "300px"}
-plot(obamadfm)
-```
-
-## Regular expressions
-
-Regular Expressions (regex) are a language or syntax to search in texts.
-Regex are used by most search engines in one form or another and are part of almost any programming language. In R, many string functions in `base` R as well as in `stringr` package use regular expressions, even Rstudio's search and replace allows regular expression.
-
-You could use regex to e.g.:
-
-- Count the occurence of certain persons/organization etc. in text
-- Calculate the sums of fund discussed in legislation
-- Chose your texts based on regexes
-
-In textpreparation, regex are used to remove certain unwanted parts of text.
-
-## Regular expression syntax 
-
-Regular expressions typically specify characters to seek out, possibly with information about repeats and location within the string. This is accomplished with the help of metacharacters that have specific meaning: 
-
-- `$ * + . ? [ ] ^ { } | ( ) \`. 
-
-
-## String functions related to regular expression
-
-  **identify match to a pattern**: `grep(..., value = FALSE)`, `grepl()`, `stringr::str_detect()`
-  
-  **extract match to a pattern**: `grep(..., value = TRUE)`, `stringr::str_extract()`, `stringr::str_extract_all()`     
-  
-  **locate pattern within a string**: `regexpr()`, `gregexpr()`, `stringr::str_locate()`, `string::str_locate_all()`     
-  
-  **replace a pattern**: `sub()`, `gsub()`, `stringr::str_replace()`, `stringr::str_replace_all()`     
-  
-  **split a string using a pattern**: `strsplit()`, `stringr::str_split()`   
-  
-
-## Escape sequences
-
-There are some special characters in R that cannot be directly coded in a string. For example, let's say you specify your pattern with single quotes and you want to find countries with the single quote `'`. You would have to "escape" the single quote in the pattern, by preceding it with `\`, so it's clear it is not part of the string-specifying machinery: 
-
-```{r quote_error}
-grep('\'', levels(gDat$country), value = TRUE)
-```
-
-## Escape sequences (II)
-
-There are other characters in R that require escaping, and this rule applies to all string functions in R, including regular expressions. See [_here_](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Quotes.html) for a complete list of R esacpe sequences.        
-
-  * `\'`: single quote. You don't need to escape single quote inside a double-quoted string, so we can also use `"'"` in the previous example.        
-  * `\"`: double quote. Similarly, double quotes can be used inside a single-quoted string, i.e. `'"'`.          
-  * `\n`: newline.   
-  * `\r`: carriage return.   
-  * `\t`: tab character.   
-
-
-## Quantifiers
-
-Quantifiers specify the number of repetitions of the pattern.   
-
-  * `*`: matches at least 0 times.   
-  * `+`: matches at least 1 times.     
-  * `?`: matches at most 1 times.    
-  * `{n}`: matches exactly n times.    
-  * `{n,}`: matches at least n times.    
-  * `{n,m}`: matches between n and m times.     
-
-
-## Quantifiers (II)
-
-```{r quantifiers}
-strings <- c("a", "ab", "acb", "accb", "acccb", "accccb")
-grep("ac*b", strings, value = TRUE)
-grep("ac+b", strings, value = TRUE)
-grep("ac?b", strings, value = TRUE)
-grep("ac{2}b", strings, value = TRUE)
-grep("ac{2,}b", strings, value = TRUE)
-grep("ac{2,3}b", strings, value = TRUE)
-```
-
-## Task 2  
-Find all countries with `ee` in the Gapminder dataset using quantifiers.   
-
-## Task 2 solution  
-Find all countries with `ee` in the Gapminder dataset using quantifiers.   
-
-```{r ex_quant, echo = FALSE}
-grep("e{2}", levels(gDat$country), value = TRUE)
-```
-
-## Position of pattern within the string 
-
-  * `^`: matches the start of the string.   
-  * `$`: matches the end of the string.   
-  * `\b`: matches the empty string at either edge of a _word_. Don't confuse it with `^ $` which marks the edge of a _string_.   
-  * `\B`: matches the empty string provided it is not at an edge of a word.    
-
-```{r position}
-(strings <- c("abcd", "cdab", "cabd", "c abd"))
-grep("ab", strings, value = TRUE)
-grep("^ab", strings, value = TRUE)
-grep("ab$", strings, value = TRUE)
-grep("\\bab", strings, value = TRUE)
-```
-
-
-## Task 3 
-Find all `.txt` files in the "Slides/Week9" folder   
-
-
-## Task 3 solution
-Find all `.txt` files in the "Slides/Week9" folder   
-
-```{r ex_pos, echo = FALSE}
-files <- list.files("Slides/Week9")
-grep("\\.txt$", files, value = TRUE)
-```
-
-## Operators
-
-  * `.`: matches any single character
-  * `[...]`: a character list, matches any one of the characters inside the square brackets. We can also use `-` inside the brackets to specify a range of characters.   
-  * `[^...]`: an inverted character list, similar to `[...]`, but matches any characters __except__ those inside the square brackets.  
-  * `\`: suppress the special meaning of metacharacters in regular expression, i.e. `$ * + . ? [ ] ^ { } | ( ) \`, similar to its usage in escape sequences. Since `\` itself needs to be escaped in R, we need to escape these metacharacters with double backslash like `\\$`.   
-  * `|`: an "or" operator, matches patterns on either side of the `|`.  
-  * `(...)`: grouping in regular expressions which allows to retrieve the bits that matched various parts of your regular expression. Each group can than be refer using `\\N`, with N being the No. of `(...)` used. This is called __backreference__.    
-
-## Operators (II)
-
-```{r operators}
-strings <- c("^ab", "ab", "abc", "abd", "abe", "ab 12")
-grep("ab.", strings, value = TRUE)
-grep("ab[c-e]", strings, value = TRUE)
-grep("ab[^c]", strings, value = TRUE)
-grep("^ab", strings, value = TRUE)
-grep("\\^ab", strings, value = TRUE)
-grep("abc|abd", strings, value = TRUE)
-gsub("(ab) 12", "\\1 34", strings)
-```
-
-## Task 4
-
-Find countries in the Gapminder data with letter `i` or `t`, and ends with `land`, and replace `land` with `LAND` using backreference.  
-
-
-## Task 4 solution
-
-Find countries in the Gapminder data with letter `i` or `t`, and ends with `land`, and replace `land` with `LAND` using backreference.  
-
-```{r ex_operator, echo = F}
-countries <- gsub("(.*[it].*)land$", "\\1LAND", levels(gDat$country), ignore.case = T)
-grep("LAND", countries, value = TRUE)
-```
-
-
-## Character classes
-
-Character classes allow to specify entire classes of characters, such as numbers, letters, etc. There are two flavors of character classes, one uses `[:` and `:]` around a predefined name inside square brackets and the other uses `\` and a special character. They are sometimes interchangeable.   
-
-  - `[:digit:]` or `\d`: digits, 0 1 2 3 4 5 6 7 8 9, equivalent to `[0-9]`.  
-  - `\D`: non-digits, equivalent to `[^0-9]`.  
-  - `[:lower:]`: lower-case letters, equivalent to `[a-z]`.  
-  - `[:upper:]`: upper-case letters, equivalent to `[A-Z]`.  
-  - `[:alpha:]`: alphabetic characters, equivalent to `[[:lower:][:upper:]]` or `[A-z]`.  
-  - `[:alnum:]`: alphanumeric characters, equivalent to `[[:alpha:][:digit:]]` or `[A-z0-9]`.
-
-  
-## Character classes (II)
-
-  - `\w`: word characters, equivalent to `[[:alnum:]_]` or `[A-z0-9_]`.  
-  - `\W`: not word, equivalent to `[^A-z0-9_]`.  
-  - `[:xdigit:]`: hexadecimal digits (base 16), 0 1 2 3 4 5 6 7 8 9 A B C D E F a b c d e f, equivalent to `[0-9A-Fa-f]`.
-  - `[:blank:]`: blank characters, i.e. space and tab.  
-  - `[:space:]`: space characters: tab, newline, vertical tab, form feed, carriage return, space.
-  - `\s`: space, ` `.  
-  - `\S`: not space.  
-  - `[:punct:]`: punctuation characters, ! " # $ % & ' ( ) - + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~.
-  
-## Character classes (III)
-  
-  - `[:graph:]`: graphical (human readable) characters: equivalent to `[[:alnum:][:punct:]]`.
-  - `[:print:]`: printable characters, equivalent to `[[:alnum:][:punct:]\\s]`.
-  - `[:cntrl:]`: control characters, like `\n` or `\r`, `[\x00-\x1F\x7F]`.  
-
-Note:       
-
-- `[:...:]` has to be used inside square brackets, e.g. `[[:digit:]]`.     
-- `\` itself is a special character that needs escape, e.g. `\\d`. Do not confuse these regular expressions with R escape sequences such as `\t`.      
-
-
-## General modes for patterns
-
-There are different [syntax standards](http://en.wikipedia.org/wiki/Regular_expression#Standards) for regular expressions, and R offers two:
-
-  * POSIX extended regular expressions (default)
-  * Perl-like regular expressions.
-  
-You can easily switch between by specifying `perl = FALSE/TRUE` in `base` R functions, such as `grep()` and `sub()`. For functions in the `stringr` package, wrap the pattern with `perl()`. 
-
-## General modes for patterns (II)
-
-There's one last type of regular expression -- "fixed", meaning that the pattern should be taken literally. Specify this via `fixed = TRUE` (base R functions) or wrapping with `fixed()` (`stringr` functions). For example, `"A.b"` as a regular expression will match a string with "A" followed by any single character followed by "b", but as a fixed pattern, it will only match a literal "A.b".  
-
-```{r fixed}
-strings <- c("Axbc", "A.bc")
-pattern <- "A.b"
-grep(pattern, strings, value = TRUE)
-grep(pattern, strings, value = TRUE, fixed = TRUE)
-```
-
-## General modes for patterns (III)
-
-By default, pattern matching is case sensitive in R, but you can turn it off with `ignore.case = TRUE` (base R functions) or wrapping with `ignore.case()` (`stringr` functions). Alternatively, you can use `tolower()` and `toupper()` functions to convert everything to lower or upper case. Take the same example above: 
-
-```{r ignore.case}
-pattern <- "a.b"
-grep(pattern, strings, value = TRUE)
-grep(pattern, strings, value = TRUE, ignore.case = TRUE)
-```
-
-## Task 5
-
-Find continents in Gapminder with letter `o` in it.  
-
-## Task 5 solution
-
-Find continents in Gapminder with letter `o` in it.  
-
-```{r ex_case, echo=F}
-grep("o", levels(gDat$continent), ignore.case = TRUE, value = TRUE)
-```
-
-
-## Regular expression vs shell globbing
-
-The term globbing refers to pattern matching based on wildcard characters. A wildcard character can be used to substitute for any other character or characters in a string. Globbing is commonly used for matching file names or paths, and has a much simpler syntax. Below is a list of globbing syntax and their comparisons to regular expression:   
-
-  * `*`: matches any number of unknown characters, same as `.*` in regular expression.  
-  * `?`: matches one unknown character, same as `.` in regular expression.  
-  * `\`: same as regular expression.  
-  * `[...]`: same as regular expression.  
-  * `[!...]`: same as `[^...]` in regular expression.   
-
-## Resources
-
-  - Regular expression in R [official document](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html).  
-  - Perl-like regular expression: regular expression in perl [manual](http://perldoc.perl.org/perlre.html#Regular-Expressions).   
-  - [`qdapRegex` package](http://trinkerrstuff.wordpress.com/2014/09/27/canned-regular-expressions-qdapregex-0-1-2-on-cran/): a collection of handy regular expression tools, including handling abbreviations, dates, email addresses, hash tags, phone numbers, times, emoticons, and URL etc.   
-  - On these websites, you can simply paste your test data and write regular expression, and matches will be highlighted.
-  
-    + [regexpal](http://regexpal.com/)
-    + [RegExr](http://www.regexr.com/)   
-
-
 
 ## Dictionary approaches
 
@@ -450,13 +81,29 @@ as part of the text analysis procedure
 ## Example 2: Terrorist speech
 
 ```{r, out.width = "220px", echo = F}
-knitr::include_graphics("img/9-1.png")
+knitr::include_graphics("img/10-1.png")
+```  
+
+## Examples 3: Happiness in song lyrics
+
+Valence time series for song titles broken down by representative genres (Dodds & Danforth 2009)
+
+```{r, out.width = "320px", echo = F}
+knitr::include_graphics("img/10-2.png")
+```  
+
+## Examples 4: Happiness in blogs
+
+Time series of average monthly valence for blog sentences starting with "I feel…" (Dodds & Danforth 2009)
+
+```{r, out.width = "320px", echo = F}
+knitr::include_graphics("img/10-3.png")
 ```  
 
 ## Advantage: Multi-lingual
 
 ```{r, out.width = "220px", echo = F}
-knitr::include_graphics("img/9-2.png")
+knitr::include_graphics("img/10-4.png")
 ```  
 
 ## Disdvantage: Highly specific to context
@@ -506,6 +153,71 @@ H4N were typically not negative in a financial context e.g. mine or cancer, or t
 
     + Replaces the creation of a dictionary as in Laver and Garry 2000
 
+## Creating a simple dictionary
+
+To create a simple dictionary of parts of speech, for instance we could define a dictionary consisting of articles and conjunctions, using:
+
+```{r}
+posDict <- dictionary(list(articles = c("the", "a", "and"),
+           conjunctions = c("and", "but", "or", "nor", "for", "yet", "so")))
+```
+        
+We can use this dictionary when we create a `dfm` to let this define a set of features:
+
+```{r}
+posDfm <- dfm(data_corpus_inaugural, dictionary=posDict)
+posDfm[1:5,]
+```
+
+## Wordscores
+
+Wordscores compares the word frequencies of texts at hand to the word frequencies of so called reference texts with known (or assumed) positions and assigns document scores based on the similarity of these references.
+
+- Highly automated, (nearly) no language knowledge needed
+
+## Wordscores concept
+
+**The idea**
+
+- Each word has a policy position (word score)
+- Some reference document positions are known
+- Document positions are average of its words' positions
+
+- 1st step: Derive wordscores from reference texts
+- 2nd step: Apply wordscores to virgin texts
+
+## Wordscores: illustrative example
+
+- Consider two reference texts A and B
+- The word "choice" is used 10 times per 10,000 wirds in text A and 30 times per 10,000 words in text B
+- Conditional on observing the word choice, we are reading text A with probability 0.25 and text B with probability 0.75
+- We can compute a "word score" once we assign reference values to the reference texts
+- Suppose reference text A has position -1, and text B position +1
+- then the score of word "choice" is:
+
+    + $0.25(-1.0)+0.75(1.0)=-0.25+0.75=0.5$
+
+
+## Wordscores Procedure
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/10-6.png")
+```  
+
+
+## Wordscores Procedure (II)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/10-7.png")
+```  
+
+
+## Wordscores Procedure (III)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/10-8.png")
+```  
+
 
 ## Estimating Policy Positions from Political Texts
 
@@ -518,9 +230,21 @@ H4N were typically not negative in a financial context e.g. mine or cancer, or t
     + More hierachical, larger number of categories
     + Each category has a pro-, con- and neutral variant
 
+
 ## Estimating Policy Positions from Political Texts (II)
 
-**Training Set** 
+Assumptions:
+
+1. Manifesto content is related to party policy positions
+2. Word usage is realted to policy positions
+3. Word usage is contant over time
+4. All relevant words are coverered in the reference texts
+
+How do these compare to the CMP assumptions?
+
+## Estimating Policy Positions from Political Texts (III)
+
+**1st step: Training set** 
 
 - Manifestos of Labour and Cons (UK) in 1992
 
@@ -530,9 +254,9 @@ H4N were typically not negative in a financial context e.g. mine or cancer, or t
 
 - Allocate selected words to the coding scheme's categories
 
-## Estimating Policy Positions from Political Texts (III)
+## Estimating Policy Positions from Political Texts (IV)
     
-- Count the occurence of the elements in the dictionary in manifestos
+**2nd step: Count occurence of elements in the dictionary in manifestos**
 
     + Britain (1992 & 1997)
     + Ireland (1992 & 1997)
@@ -543,22 +267,191 @@ H4N were typically not negative in a financial context e.g. mine or cancer, or t
     + $Econ_{LR}$
     + $Soc_{LR}$
 
+## Estimating Policy Positions from Political Texts (V)
 
-## Estimating Policy Positions from Political Texts (III)
 
-
-- Test-Set: Crossvalidation
+**Test-Set: Crossvalidation**
 
     + Expert Surveys
     + CMP Coding/Revised CMP Coding
 
 ```{r, out.width = "250px", echo = F}
-knitr::include_graphics("img/9-3.png")
+knitr::include_graphics("img/10-5.png")
 ```  
 
-## Estimating Policy Positions from Political Texts (III)
+
+## Wordscores and Dictionaries
+
+- Conceptually, the two steps do the same in both approaches:
+
+    + 1st step derives a position of a word from texts with known properties
+    + 2nd step weighs the words in the unknown texts with this information
+
+- Information in LG-Dictionary is binary, wordscores in wordscore are scale
+
+
+## Selecting reference texts
+
+- Reference texts should use the same vocabulary in the same context
+- Reference texts need to span the full dimension
+- Set of reference text should contain as many words as possible
+- Estimates of the positions (reference scores) need to be well grounded and/or very conservative
+
+
+## 1st step - Getting the wordscores
+
+- Start out from the observed word frequencies in reference texts:
+- $F_{wr}$: Relative frequency of word $w$ in reference-text $r$
+- Conditional probabilities: Given we are observing word $w$, what is the probability that we are reading text $r$?
+
+
+## 1st step - Obtaining wordscores
+
+- Start out from the observed word frequencies in reference texts:
+- $F_{wr}$: Relative frequency of word $w$ in reference-text $r$
+- Conditional probabilities: Given we are observing word $w$, what is the probability that we are reading text $r$?
+
+- $P_{wr} = \frac{F_{wr}}{\sum{_r}F_{wr}}$
+
+
+## 1st step - Obtaining wordscores (II)
+
+- $S_{w} = \sum{_r}(P_{wr}*A_{r}$
+
+    + $A_{r}$ is the a priori score for reference text r
+
+- $S_{w}$ is a weighted average of the a priori reference text score and the conditional probabilities for the word
+
+    + The actual wordscore for word w
+    
+    
+## 2nd step – Applying the wordscores
+
+- $S_{v} = \sum{_w}(F_{wv}*S_w)$
+
+    + $F_{wv}$ is analogous to $F_{wr}$
+    + $S_v$ is the weighted mean score of the words in text $v$
+
+- Variance is the basis for calculating uncertainty
+
+    + Summary for the consensus of the scores of each word in the virgin text
+    + Higher consensus -> lower variance -> less uncertainty
+    
+## Wordscores – Practical considerations
+
+- What about scaling things other than manifestos?
+
+- E.g. speeches:
+
+    + Use reference texts from other context (e.g. manifesto)?
+    + What scores to use?
+    + Length of the reference texts?
+    
+## Wordscores in R
+
+Wordscores (and Wordfish) are available in the `austin` package and in `quanteda`.
+
+## Comparing wordscores and CMP
+
+- Laver, Garry & Benoit use Irish and British manifestos to demonstrate/validate
+- CMP data offers information for many countries and over long periods
+- How do wordscores results compare across countries?
+
+## Comparing wordscores and CMP (II)
+
+- Bräuninger, Debus & Müller (2013) compare wordscores results for 13 countries between 1980 and 2000
+- Reference texts are the manifestos in the latest elections
+- Reference scores are the Rile scores from CMP
+- Essentially 'replicate' CMP scores using wordscores
+
+## Comparing wordscores and CMP (III)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/10-9.png")
+```  
+
+
+## Comparing wordscores and CMP (III)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/10-10.png")
+```  
+
+
+## Comparing wordscores and CMP (IV)
+
+- Wordscores replicates CMP better whew
+
+    + reference texts cover the full range of a dimension
+    + the percentage of scored words is high
+
+- Cross-check results from wordscores before using them in an analysis
+
+
+## Wordscores exercise - download data and create corpus
+
+```{r}
+library(tm)
+library(quanteda)
+library(stringr)
+
+# UK, DE, IE manifestos
+wdir <- getwd()
+
+temp <- tempfile(fileext = ".zip")
+download.file(paste0("http://www.tcd.ie/Political_Science/wordscores/",
+                     "files/WordscoresAPSR2_manifestos.zip"),
+              temp)
+unzip(zipfile= temp, exdir = wdir)
+unlink(temp)
+
+myTmCorpus <- VCorpus(DirSource(wdir, pattern = "\\.txt" , recursive = T))
+mycorpusTM <- corpus(myTmCorpus)
+```
+
+## Wordscores exercise - Preprocessing
+
+```{r}
+manifestoDfm <- dfm(mycorpusTM, tolower=T, removePunct=T,
+                    removeNumbers=T, removeSeparators = T,
+                    remove = c(stopwords("english"), stopwords("german")))
+manifestoDfm@Dimnames$docs <- names(myTmCorpus)
+```
+
+## Wordscores exercise - Create reference scores
+
+```{r}
+refs <- c(4.19,NA,NA,13.53, NA, 15.68,5.21, NA, 6.53,
+          rep(NA, 8),4.50, 13.13,15.00,6.88,17.63,NA,
+          17.21,NA, 5.35, 8.21, NA)
+```
+
+## Wordscores exercise - Run wordfish model
+
+```{r}
+ws <- textmodel(manifestoDfm, y = refs, model = "wordscores")
+pred <- predict(ws)
+```
+
+## Wordscores exercise - Plot results
+```{r, out.width = "250px"}
+# plot estimated word positions
+dotchart(pred@textscores$textscore_raw,labels=names(myTmCorpus),cex=.8,
+         main="Wordscore positions")
+```
+
+## Final research project
+
+- Apply one (or more) of the computarized text analysis techniques (dictionaries, wordscore, wordfish, topic modelling) in your own research project
+
+    + must use text data
+    
+- ~8 pages detailing research question, data set, model specification, analysis and results
+- team-work is encouraged
+- Due 15 May
+
 
 
 ## Next Session
 
-- Automated text analysis with wordscores
+- Wordfish
