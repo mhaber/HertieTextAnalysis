@@ -1,0 +1,184 @@
+---
+title: "Quantitative Content Analysis: Lecture 11"
+author: "Matthias Haber"
+date: "26 April 2017"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
+  ioslides_presentation:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F,
+                      warning = F, mysize=T, size='\\footnotesize')
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
+```
+
+## Today's outline
+
+- Text data sources and scripts
+- Wordfish
+
+## Online text data sources
+
+- **web pages** (e.g. http://example.com)
+- **web formats** (XML, HTML, JSON, ...)
+- **web frameworks** (HTTP, URL, APIs, ...)
+- **social media** (Twitter, Facebook, LinkedIn, Snapchat, Tumbler, ...)
+- **data in the web** (speeches, laws, policy reports, news, ... )
+- **web data** (page views, page ranks, IP-addresses, ...)
+
+## The Problems
+
+**phase**     | **problems** | **examples**
+--------------|--------------|----------------------------------------
+**download**  | protocols    | HTTP, HTTPS, POST, GET, ... 
+&nbsp;        | procedures   | cookies, authentication, forms, ...
+--------------|--------------|-----------------------------------------
+**extraction**| parsing      | translating HTML (XML, JSON, ...) into R
+&nbsp;        | extraction   | getting the relevant parts
+&nbsp;        | cleansing    | cleaning up, restructure, combine
+
+
+## Before scraping, do some googling!
+
+- If the resource is well-known, someone else has probably built a tool which solves the problem for you.
+- [ropensci](https://ropensci.org/) has a [ton of R packages](https://ropensci.org/packages/) providing easy-to-use interfaces to open data.
+- The [Web Technologies and Services CRAN Task View](http://cran.r-project.org/web/views/WebTechnologies.html) is a great overview of various tools for working with data that lives on the web in R.
+
+## Example
+
+<iframe src = "http://en.wikipedia.org/wiki/Table_%28information%29" width = "800px" height = "600px"></iframe>
+
+
+## Inspecting elements
+
+```{r, out.width = "220px", echo = F}
+knitr::include_graphics("img/inspect-element.png")
+```  
+
+## Hover to find desired elements
+
+```{r, out.width = "260px", echo = F}
+knitr::include_graphics("img/inspector.png")
+```  
+
+
+## Wikitable {.build}
+
+```{r}
+library(rvest)
+src <- html("http://en.wikipedia.org/wiki/Table_(information)")
+node <- html_node(src, css = ".wikitable")
+```
+
+- `".wikitable"` is a CSS selector which says: "grab nodes (aka elements) with a class of wikitable".
+- `html_table()` converts a single `<table>` node to a data frame.
+
+```{r}
+html_table(node)
+```
+
+## Pipeable! {.build}
+
+```{r}
+html("http://en.wikipedia.org/wiki/Table_(information)") %>%
+  html_node(".wikitable") %>% html_table()
+```
+
+## Rvest
+
+[rvest](https://github.com/hadley/rvest) is a nice R package for web-scraping by (you guessed it) Hadley Wickham.
+
+
+```{r}
+library(dplyr)
+library(rvest)
+library(magrittr)
+# First, grab the page source
+html("http://en.wikipedia.org/wiki/Table_(information)") %>%
+  # then extract the first node with class of wikitable
+  html_node(".wikitable") %>% 
+  # then convert the HTML table into a data frame
+  html_table()
+```
+
+## HTML / XML with rvest
+
+```{r}
+rpack_html <-
+"http://cran.r-project.org/web/packages" %>%
+html()
+rpack_html %>% class()
+```
+
+## HTML / XML with rvest (II)
+
+```{r}
+rpack_html %>% xml_structure(indent = 2)
+```
+
+## HTML / XML with rvest (III)
+
+```{r}
+rpack_html %>% html_text() %>% cat()
+```
+
+## Technologies and Packages
+
+- Regular Expressions / String Handling
+
+    + **stringr**, stringi
+
+- HTML / XML / XPAth / CSS Selectors
+
+    + **rvest**, xml2, XML
+
+- JSON
+
+    + **jsonlite**, RJSONIO, rjson
+
+- HTTP / HTTPS
+
+    + **httr**, curl, Rcurl
+
+- Javascript / Browser Automation
+
+    + **RSelenium**
+
+- URL
+
+    + **urltools**
+
+## Readings
+
+- Basics on HTML, XML, JSON, HTTP, RegEx, XPath
+
+    + Munzert et al. (2014): Automated Data Collection with R. Wiley. http://www.r-datacollection.com/
+
+- curl / libcurl
+
+    + http://curl.haxx.se/libcurl/c/curl_easy_setopt.html
+
+- CSS Selectors
+
+    + W3Schools: http://www.w3schools.com/cssref/css_selectors.asp
+
+- Packages: httr, rvest, jsonlite, xml2, curl
+
+    + Readmes, demos and vignettes accompanying the packages
+
+- Packages: RCurl and XML
+
+    + Munzert et al. (2014): Automated Data Collection with R. Wiley. Nolan and Temple-Lang (2013): XML and Web Technologies for Data Science with R. Springer
+
+## Next Session
+
+- Topic modelling
