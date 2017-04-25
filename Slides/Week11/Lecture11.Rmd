@@ -179,6 +179,77 @@ rpack_html %>% html_text() %>% cat()
 
     + Munzert et al. (2014): Automated Data Collection with R. Wiley. Nolan and Temple-Lang (2013): XML and Web Technologies for Data Science with R. Springer
 
+
+## Twitter
+
+**Twitter has two types of APIs**
+
+- REST APIs --> reading/writing/following/etc.
+
+- Streaming APIs --> low latency access to 1% of global stream - public, user and site streams
+
+- authentication via OAuth
+
+- documentation at https://dev.twitter.com/overview/documentation
+
+## Accessing the twitter APIs
+
+To access the REST and streaming APIs, you will need to create a twitter application, and generate authentication credentials associated with this application. To do this you will first need to have a twitter account. You will also need to install at least the following R packages: `twitteR`, 
+
+
+```{r, eval = FALSE}
+install.packages(c('twitteR', 'streamR', 'RCurl', 'ROAuth', 'httr'))
+```
+
+## Create a twitter application
+
+To register a twitter application and get your consumer keys:
+
+1. Go to <https://apps.twitter.com> in a web browser.
+2. Click on 'create new app'.
+3. Give your app a unique name, a description, any relevant web address, and agree to the terms and conditions. Set the callback URL to http://127.0.0.1:1410.
+4. Go to the keys and access section of the app page, and copy your consumer key and consumer secret to the code below.
+5. (optional): For actions requiring write permissions, generate an access token and access secret.
+
+## Use twitter in R
+
+```{r, eval = FALSE}
+library(twitteR)
+library(streamR)
+library(ROAuth)
+
+consumerKey <- 'your key here'
+consumerSecret <- 'your secret here'
+
+# Try this first, to use twitteR
+setup_twitter_oauth(consumerKey, consumerSecret)
+results <- searchTwitter('#Trump')
+df <- as.data.frame(t(sapply(results, as.data.frame)))
+```
+
+Then try these instructions, to use streamR:
+<https://github.com/pablobarbera/streamR#installation-and-authentication>
+
+
+## Media data from LexisNexis
+
+Nexis includes a large selection of international newspapers updated daily. Among them The Daily Telegraph, International New York Times, The Observer, Le Figaro, Le Monde, Corriere della Sera, taz, die tageszeitung, Die ZEIT.
+
+You can access Nexis through the Hertie Library: https://www.hertie-school.org/en/library/resources/#c6741 (scroll down till you find the Nexis link).
+
+## Parse data from Nexis into R
+```{r}
+library(tm)
+library(tm.plugin.lexisnexis)
+library(quanteda)
+ 
+ln <- LexisNexisSource("lexisnexis.HTML")
+tmCorpus <- VCorpus(ln)
+myCorpus <- corpus(tmCorpus)
+mydfm <- dfm(myCorpus)
+```
+
 ## Next Session
+
 
 - Topic modelling
