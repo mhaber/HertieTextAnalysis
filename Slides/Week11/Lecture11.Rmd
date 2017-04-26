@@ -153,7 +153,7 @@ What about non-table data?
 ```{r}
 domain <- "http://www.sec.gov"
 susp <- paste0(domain, "/litigation/suspensions.shtml")
-hrefs <- read_html(susp) %>% html_nodes("p+ table a") %>% 
+hrefs <- read_html(susp) %>% html_nodes("tr+ tr a:nth-child(1)") %>% 
   html_attr(name = "href")
 ```
 
