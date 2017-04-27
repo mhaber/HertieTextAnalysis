@@ -1,0 +1,160 @@
+---
+title: "Quantitative Content Analysis: Lecture 11"
+author: "Matthias Haber"
+date: "26 April 2017"
+output:
+  beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "default"
+    fig_caption: false
+  ioslides_presentation:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = T, cache=T, fig.align= "center", message = F,
+                      warning = F, mysize=T, size='\\footnotesize')
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
+```
+
+## Today's outline
+
+- Topic Models
+- Wrapping up
+
+## Topic models: basic idea
+
+- Perhaps you don’t want to, or can’t write a dictionary yourself.
+- Perhaps you worry about measurement error
+
+- Topic models (Blei and Lafferty, 2009) are exploratory probability models that
+
+    + weaken the contraints required in dictionary based content analysis
+    + have been intensively studied in the computer science literature 
+
+These are exploratory methods that work best with large amounts of text with a thematic structure.
+
+## Topic models: LDA
+
+Latent Dirichlet allocation (LDA) is a popular method for fitting a topic model. It treats each document as a mixture of topics, and each topic as a mixture of words. 
+
+```{r, out.width = "220px", echo = F}
+knitr::include_graphics("img/lda1.png")
+```  
+
+## Topic models: LDA (II)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/lda2.png")
+```  
+
+## Topic models: LDA (III)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/lda3.png")
+```  
+
+## Topic models: LDA (IV)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/lda4.png")
+```  
+
+## Topic model: LDA (V)
+
+- Topic models giveth:
+
+    + a probabilistic view of the relationship between W, Z and $\theta$
+    + a full statistical framework for learning most aspects of the relationship
+
+- and taketh away:
+
+    + substantive control: You do not get to assert what the topics mean (inevitable when the Z and $\theta$ are both unobserved)
+
+## Topic model: LDA (VI)
+
+- What control is left?
+
+    + $\alpha$ the parameter of a Dirichlet prior for the distributions (not number) of topics
+    + $\eta$ the parameter of a Dirichlet prior over the distributions of words in topics
+
+- Roughly, larger values allow more variation and less sparse representations
+- Topic models are admixtures: mixtures of mixtures
+
+
+## Variations: dynamic topic models (II)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/dynamictm.png")
+```  
+
+- Quinn et al. analyze 118,065 such congressional speeches from
+1997-2004.
+
+- $\theta$ has Markovian dynamics for smooth movement in topic proportions.
+- Note: This does not allow variation in the way topics are expressed in
+words
+
+## Application: policy agenda
+
+```{r, out.width = "230px", echo = F}
+knitr::include_graphics("img/policyagenda.png")
+```  
+
+## Defining topics
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/definingTopics.png")
+```  
+
+## Defining topics (II)
+
+```{r, out.width = "230px", echo = F}
+knitr::include_graphics("img/clustering.png")
+``` 
+
+## Defining topics (III)
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/clustering2.png")
+``` 
+
+## Variations: expressed agenda model
+
+In a simpler variation on LDA, Grimmer (2009) defines an expressed agenda model as
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/grimmer.png")
+``` 
+
+- Here there are not multiple topics per press release, but there are
+observed authors drawn from a population
+
+## Variations: correlated topic models
+
+- The Dirichlet multinomial assumptions hide a constraint about topic
+covariation
+
+    + LDA cannot represent free covariation of topic proportions
+    + The correlated topic model can
+
+- Replace the Dirichlet with a Logistic Normal structure (Aitchison, 1986)
+with arbitrary covariance matrix
+
+## Topic models in R
+
+- `topicmodels`
+
+    + LDA & CTM
+
+-     
+    
+## Text analysis workflow
+
+```{r, out.width = "250px", echo = F}
+knitr::include_graphics("img/textanalysis.png")
+``` 
