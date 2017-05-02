@@ -23,20 +23,56 @@ knitr::knit_hooks$set(mysize = function(before, options, envir) {
 
 ## Today's outline
 
+- Final project expectations
 - Topic Models
 - Wrapping up
 
+## Final project expectations
+
+- Develop an interesting (non-trivial) research question (10)
+
+    + Trivial: Did the CDU move to the left under Angela Merkel?
+    + Less trivial: Did the CDU move to the left on every issue under Angela Merkel?
+    + Non-trivial: Is there a general shift to the left among conservative parties in Europe on all policy issues?
+    + The RQ does not need to contain a causal link (but it can)
+    + Motivate your RQ
+    
+- Collect appropriate (text) data to answer your research question (25)  
+
+    + Data needs to fit the research question (explain why it does)
+    + Trivial: Use build-in datasets in R (e.g. inauguration speeches)
+    + Less trivial: Download or access pre-existing datasets (e.g. manifestos)
+    + Non-trivial: Construct your own data set (e.g. Twitter, News Media, Press releases)
+    
+- Prepare your data set for analysis (15)
+
+    + Perform the necessary preprocessing steps and create a dfm
+
+- Specify and apply the appropriate computarized text analysis techniques (25) 
+
+    + must be a variant of a dictionary, wordscore, wordfish, or topic modelling
+
+- Present and discuss your results (25)
+
+    + Appropriate graphical presentations of results (watch out for the quality of graphs)
+
+
+- ~8 pages (more is not an issue) detailing research question, data set, model specification, analysis and results
+
+- team-work is encouraged
+- Due 15 May
+
+
 ## Topic models: basic idea
 
-- Perhaps you don’t want to, or can’t write a dictionary yourself.
-- Perhaps you worry about measurement error
+We often have collections of documents that we’d like to divide into natural groups so that we can understand them separately. Topic modeling is a method for unsupervised classification of such documents, which finds natural groups of items even when we’re not sure what we’re looking for.
 
-- Topic models (Blei and Lafferty, 2009) are exploratory probability models that
+- Topic models are exploratory probability models that
 
     + weaken the contraints required in dictionary based content analysis
     + have been intensively studied in the computer science literature 
 
-These are exploratory methods that work best with large amounts of text with a thematic structure.
+- Topic models work best with large amounts of text with a thematic structure
 
 ## Topic models: LDA
 
