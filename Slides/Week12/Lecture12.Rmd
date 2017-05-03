@@ -283,7 +283,7 @@ We will take another look at the US Senate debate on partial birth abortion.
 
 4. Use `convert` to convert the dfm to a topicmodel object.
 
-5. Estimate a lda model using the `LDA` function from the `topicmodel` package and set the number of topics to 6 and $/alpha$ to 0.1.
+5. Estimate a lda model using the `LDA` function from the `topicmodel` package and set the number of topics to 6 and $\alpha$ to 0.1.
 
 6. Create a plot of the top 10 terms that are most common within each topic.
 
